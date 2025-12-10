@@ -1,0 +1,20 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO lyrics (\n                \"language\", \n                \"provider\", \n                \"synced\", \n                \"file_path\", \n                \"checksum\", \n                \"track_id\"\n            ) VALUES (\n                $1, $2, $3, $4, $5, $6\n            ) RETURNING \"id\"",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 6
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "f5da9844a0102dd1212d5758233ca47d4b289d9e3471ec4b826b92bc0282b4dd"
+}

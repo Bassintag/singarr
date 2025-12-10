@@ -1,0 +1,50 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT\n                \"id\",\n                \"title\",\n                \"cover_path\",\n                \"lidarr_id\",\n                \"musicbrainz_id\",\n                \"artist_id\"\n            FROM album\n            WHERE \"id\" = $1",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "title",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "cover_path",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "lidarr_id",
+        "ordinal": 3,
+        "type_info": "Integer"
+      },
+      {
+        "name": "musicbrainz_id",
+        "ordinal": 4,
+        "type_info": "Text"
+      },
+      {
+        "name": "artist_id",
+        "ordinal": 5,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      true,
+      true,
+      false
+    ]
+  },
+  "hash": "92704d063049da31ab10b1a44373b8ff15f4d3510fbb9797bbf5bb4a6a7b81cb"
+}

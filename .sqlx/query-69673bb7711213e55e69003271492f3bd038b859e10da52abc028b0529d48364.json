@@ -1,0 +1,20 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO artist (\n                \"name\",\n                \"lidarr_id\",\n                \"musicbrainz_id\"\n            ) VALUES (\n             $1, $2, $3\n            ) ON CONFLICT(lidarr_id) DO UPDATE SET\n                \"name\" = $1,\n                \"musicbrainz_id\" = $3\n            RETURNING \"id\"",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 3
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "69673bb7711213e55e69003271492f3bd038b859e10da52abc028b0529d48364"
+}

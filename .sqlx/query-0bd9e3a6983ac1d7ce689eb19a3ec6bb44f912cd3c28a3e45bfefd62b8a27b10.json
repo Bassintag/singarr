@@ -1,0 +1,38 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT \n                \"id\", \n                \"synced\", \n                \"file_path\", \n                \"checksum\" \n            FROM lyrics\n            ORDER BY \"created_at\" ASC",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "synced",
+        "ordinal": 1,
+        "type_info": "Bool"
+      },
+      {
+        "name": "file_path",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "checksum",
+        "ordinal": 3,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "0bd9e3a6983ac1d7ce689eb19a3ec6bb44f912cd3c28a3e45bfefd62b8a27b10"
+}

@@ -1,0 +1,20 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO album (\n                \"title\",\n                \"lidarr_id\",\n                \"musicbrainz_id\",\n                \"artist_id\"\n            ) VALUES (\n                $1, $2, $3,\n                (SELECT id FROM artist WHERE lidarr_id = $4)\n            ) ON CONFLICT(lidarr_id) DO UPDATE SET\n                \"title\" = $1,\n                \"musicbrainz_id\" = $3\n            RETURNING \"id\"",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 4
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "f5fe182bad36f0a0037254bc4a8881d3dbc54e0a5f170a71d7eac590309cf4c0"
+}

@@ -1,0 +1,20 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO track (\n                \"track_number\",\n                \"title\",\n                \"file_path\",\n                \"duration_ms\",\n                \"lidarr_id\",\n                \"musicbrainz_id\",\n                \"album_id\",\n                \"artist_id\"\n            ) VALUES (\n                $1, $2, $3, $4, $5, $6,\n                (SELECT id FROM album WHERE lidarr_id = $7),\n                (SELECT id FROM artist WHERE lidarr_id = $8)\n            ) ON CONFLICT(lidarr_id) DO UPDATE SET\n                \"track_number\" = $1,\n                \"title\" = $2,\n                \"file_path\" = $3,\n                \"duration_ms\" = $4,\n                \"musicbrainz_id\" = $6\n            RETURNING\n                \"id\"",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 8
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "6eea7cf5b71fde02475d92c889521ff05da9845b383173d6df4857a47743237b"
+}

@@ -1,0 +1,38 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT\n                \"id\",\n                \"name\",\n                \"lidarr_id\",\n                \"musicbrainz_id\"\n            FROM artist\n            ORDER BY \"name\" ASC",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "name",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "lidarr_id",
+        "ordinal": 2,
+        "type_info": "Integer"
+      },
+      {
+        "name": "musicbrainz_id",
+        "ordinal": 3,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "588e992a5f24980d3cd72b56b71c3947bf12cf4a529e9028db4ecffb8068788a"
+}

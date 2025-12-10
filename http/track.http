@@ -1,0 +1,13 @@
+@apiUrl = http://localhost:3000
+
+###
+
+# @name list
+
+GET {{apiUrl}}/tracks
+
+###
+
+# @name retrieve
+
+GET {{apiUrl}}/tracks/1
