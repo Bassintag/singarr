@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "UPDATE job\n            SET \n                \"status\" = $1,\n                \"completed_at\" = CURRENT_TIMESTAMP\n            WHERE \"id\" = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "f892ee3a9dc06735b93ef93451d2546724f7df057302e592ea89e124d84d556f"
+}

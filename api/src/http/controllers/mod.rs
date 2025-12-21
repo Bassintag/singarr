@@ -1,5 +1,8 @@
 pub mod album;
 pub mod artist;
+pub mod job;
 pub mod lyrics;
+pub mod search;
 pub mod settings;
+pub mod socket;
 pub mod track;

@@ -1,0 +1,20 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT l.\"file_path\" FROM lyrics l WHERE id = $1",
+  "describe": {
+    "columns": [
+      {
+        "name": "file_path",
+        "ordinal": 0,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "29fcdc5f2f54d940cd66df4630831c274a3ca92add0efa37d87defd5fcfa235e"
+}

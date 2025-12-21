@@ -3,7 +3,7 @@ use crate::{models::track::Track, worker::provider::SearchResult};
 pub fn score_result(track: &Track, result: &SearchResult) -> f64 {
     let score_track_name = score_strings(&track.title, &result.track_name);
     let score_artist_name = score_strings(&track.artist.name, &result.artist_name);
-    let score_album_title = score_strings(&track.album.title, &result.album_title);
+    let score_album_title = score_strings(&track.album.album.title, &result.album_title);
     let score_duration = match result.duration_ms {
         Some(duration_ms) => score_durations(track.duration_ms, duration_ms),
         None => 0.5,

@@ -4,7 +4,7 @@ version = "0.0.0"
 edition = "2021"
 
 [dependencies]
-axum = "0.7"
+axum = { version = "0.7", features = ["ws"] }
 tokio = { version = "1.37", features = ["macros", "rt-multi-thread"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -17,8 +17,12 @@ dotenv = "0.15.0"
 anyhow = "1.0.100"
 thiserror = "2.0.17"
 clap = { version = "4.5.53", features = ["derive", "env"] }
-reqwest = { version = "0.12.24", features = ["json"] }
+reqwest = { version = "0.12.24", default_features = false, features = [
+    "json",
+    "rustls-tls",
+] }
 serde_qs = "0.15.0"
 md5 = "0.8.0"
 async-trait = "0.1.89"
 strsim = "0.11.1"
+uuid = { version = "1.19.0", features = ["serde", "v4"] }

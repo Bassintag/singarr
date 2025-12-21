@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(default)]
+#[serde(default, rename_all = "camelCase")]
 pub struct Settings {
     pub root_folder: String,
     pub lidarr: LidarrSettings,
@@ -10,14 +10,14 @@ pub struct Settings {
 impl Default for Settings {
     fn default() -> Self {
         Self {
-            root_folder: "./".into(),
+            root_folder: "/data".into(),
             lidarr: LidarrSettings::default(),
         }
     }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(default)]
+#[serde(default, rename_all = "camelCase")]
 pub struct LidarrSettings {
     pub base_url: String,
     pub http_timeout: u64,

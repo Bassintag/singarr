@@ -1,6 +1,9 @@
 pub mod album;
 pub mod artist;
+pub mod event;
+pub mod job;
 pub mod lidarr;
 pub mod lyrics;
+pub mod search;
 pub mod settings;
 pub mod track;

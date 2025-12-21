@@ -1,0 +1,8 @@
+.vscode/
+data/
+http/
+node_modules/
+target/
+
+.gitignore
+.env

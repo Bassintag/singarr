@@ -1,12 +1,19 @@
 use std::sync::Arc;
 
 use axum::{
-    extract::{Path, State},
+    extract::{Path, Query, State},
     response::Result,
     routing, Json, Router,
 };
 
-use crate::{http::error::ApiError, models::artist::Artist, state::AppState};
+use crate::{
+    http::error::ApiError,
+    models::{
+        artist::ArtistWithStats,
+        generic::{Page, Pageable},
+    },
+    state::AppState,
+};
 
 pub fn routes() -> Router<Arc<AppState>> {
     return Router::new()
@@ -14,13 +21,16 @@ pub fn routes() -> Router<Arc<AppState>> {
         .route("/:id", routing::get(get));
 }
 
-async fn list(State(state): State<Arc<AppState>>) -> Result<Json<Vec<Artist>>, ApiError> {
-    Ok(Json(state.artist_service.find_all().await?))
+async fn list(
+    State(state): State<Arc<AppState>>,
+    Query(query): Query<Pageable>,
+) -> Result<Json<Page<ArtistWithStats>>, ApiError> {
+    Ok(Json(state.artist_service.find_page(&query).await?))
 }
 
 async fn get(
     State(state): State<Arc<AppState>>,
     Path(id): Path<i64>,
-) -> Result<Json<Artist>, ApiError> {
+) -> Result<Json<ArtistWithStats>, ApiError> {
     Ok(Json(state.artist_service.find(id).await?))
 }

@@ -1,9 +1,10 @@
 use anyhow::Result;
+use serde::{Deserialize, Serialize};
 
 use crate::{
-    state::AppState,
+    models::job::JobContext,
     worker::{
-        jobs::import_lyrics::{ImportLyricsParams, ImportType},
+        jobs::import_lyrics::{import_lyrics, ImportLyricsParams},
         provider::{Provider, SearchResult},
         providers::lrclib::LrcLibProvider,
         score::score_result,
@@ -15,13 +16,18 @@ struct ScoredResult {
     pub result: SearchResult,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SearchTrackParams {
     pub track_id: i64,
 }
 
-pub async fn search_track(state: &AppState, params: &SearchTrackParams) -> Result<()> {
-    let track = state.track_service.find(params.track_id).await?;
+pub async fn search_track(context: JobContext<SearchTrackParams>) -> Result<()> {
+    let track = context
+        .state
+        .track_service
+        .find(context.params.track_id)
+        .await?;
 
     let provider = LrcLibProvider::new();
 
@@ -49,13 +55,13 @@ pub async fn search_track(state: &AppState, params: &SearchTrackParams) -> Resul
     if let Some(best_scored) = best {
         let best_result = best_scored.result;
         let content = provider.download(&best_result).await?;
-        state
-            .queue
-            .enqueue(crate::worker::job::Job::ImportLyrics(ImportLyricsParams {
-                provider: Some(provider.name()),
-                track_id: params.track_id,
-                import_type: ImportType::Memory(content),
-            }))?;
+        import_lyrics(context.clone_with_params(ImportLyricsParams {
+            provider: Some(provider.name()),
+            track_id: context.params.track_id,
+            content,
+            synced: best_result.synced,
+        }))
+        .await?;
     }
 
     Ok(())

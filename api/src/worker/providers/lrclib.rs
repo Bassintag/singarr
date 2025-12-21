@@ -79,7 +79,7 @@ impl Provider for LrcLibProvider {
             .search(Some(LrcLibLyricsQuery {
                 track_name: Some(track.title.clone()),
                 artist_name: Some(track.artist.name.clone()),
-                album_name: Some(track.album.title.clone()),
+                album_name: Some(track.album.album.title.clone()),
                 ..Default::default()
             }))
             .await?;

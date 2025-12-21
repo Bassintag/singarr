@@ -1,0 +1,20 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO job (\n                \"payload\",\n                \"status\"\n            ) VALUES (\n                $1, $2\n            ) RETURNING \"id\"",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "d66f7d41b091f60fd574722cb08f9895215b8d0970615f51774e43c1434e0c9e"
+}

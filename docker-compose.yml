@@ -1,0 +1,9 @@
+# Example docker compose
+
+services:
+  singarr:
+    build: .
+    ports:
+      - 80:80
+    volumes:
+      - ./data/docker:/data

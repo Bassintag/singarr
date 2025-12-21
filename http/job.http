@@ -1,0 +1,13 @@
+@apiUrl = http://localhost:3000
+
+###
+
+# @name create
+
+POST {{apiUrl}}/jobs
+Content-Type: application/json
+
+{
+    "type": "cleanAlbum",
+    "albumId": 1
+}
