@@ -43,8 +43,8 @@ RUN apk add sqlite
 WORKDIR /app
 
 COPY ./docker/start.sh .
-COPY ./migrations ./migrations
 COPY ./docker/nginx.conf /etc/nginx/nginx.conf
+COPY ./migrations ./migrations
 COPY --from=builder-api /app/target/release/singarr-api /usr/bin/singarr-api
 COPY --from=builder-web /app/web/dist /usr/share/nginx/html
 
