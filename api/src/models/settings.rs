@@ -35,7 +35,7 @@ pub struct AuthSettings {
 impl Default for AuthSettings {
     fn default() -> Self {
         Self {
-            enabled: true,
+            enabled: false,
             credentials: None,
         }
     }

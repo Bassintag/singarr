@@ -3,7 +3,14 @@
 services:
   singarr:
     build: .
+    container_name: singarr
     ports:
       - 80:80
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
     volumes:
       - ./data/docker:/data
+      - ./data/music:/music
+    restart: unless-stopped
