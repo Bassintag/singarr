@@ -1,0 +1,16 @@
+@apiUrl = http://localhost:3000
+@token = eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NjY0Mjg4MTMsImV4cCI6MTc2NjQyODg3M30.2L8T3cUtFTCTF4oTKQyJKvc0WQXwqkL4koKynOtGEbk
+
+###
+
+# @name list
+
+GET {{apiUrl}}/albums
+Authorization: Bearer {{token}}
+
+###
+
+# @name retrieve
+
+GET {{apiUrl}}/albums/1
+Authorization: Bearer {{token}}

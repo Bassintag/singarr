@@ -5,7 +5,7 @@ import { idSchema } from "@/domain/generic";
 import { createFileRoute } from "@tanstack/react-router";
 import z from "zod";
 
-export const Route = createFileRoute("/artists/$id")({
+export const Route = createFileRoute("/(app)/artists/$id")({
   component: RouteComponent,
   params: idSchema,
   validateSearch: z.object({

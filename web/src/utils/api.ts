@@ -1,3 +1,4 @@
+import { useTokenState } from "@/hooks/token/useTokenState";
 import * as qs from "qs";
 
 export class ApiError extends Error {
@@ -14,6 +15,7 @@ export class ApiError extends Error {
 }
 
 export interface ApiRequestInit extends RequestInit {
+  auth?: boolean;
   json?: unknown;
   query?: unknown;
 }
@@ -28,12 +30,18 @@ export function resolveApiUrl(path: string) {
 
 export async function fetchApi<T>(
   path: string,
-  { json, query, ...init }: ApiRequestInit = {}
+  { auth = true, json, query, ...init }: ApiRequestInit = {}
 ) {
   const url = resolveApiUrl(path);
   url.search = qs.stringify(query);
+  init.headers = new Headers(init.headers);
+  if (auth) {
+    const token = useTokenState.getState().tokens?.access;
+    if (token) {
+      init.headers.set("Authorization", `Bearer ${token}`);
+    }
+  }
   if (json) {
-    init.headers = new Headers(init.headers);
     init.headers.set("Content-Type", "application/json");
     init.body = JSON.stringify(json);
   }

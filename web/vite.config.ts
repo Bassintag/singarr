@@ -12,7 +12,11 @@ export default defineConfig({
       autoCodeSplitting: true,
     }),
     tailwindcss(),
-    checker({ typescript: true }),
+    checker({
+      typescript: {
+        tsconfigPath: "tsconfig.app.json",
+      },
+    }),
     react(),
   ],
   resolve: {

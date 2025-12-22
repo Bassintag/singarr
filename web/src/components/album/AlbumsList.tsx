@@ -1,6 +1,6 @@
 import type { AlbumWithStats } from "@/domain/album";
 import { albumsQueryOptions } from "@/queries/album";
-import { Route } from "@/routes/artists/$id";
+import { Route } from "@/routes/(app)/artists/$id";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDownIcon } from "lucide-react";
 import { useState, type ComponentProps } from "react";

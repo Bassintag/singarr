@@ -9,6 +9,9 @@ pub enum ApiError {
     #[error("Not found error")]
     NotFound(),
 
+    #[error("Forbidden error")]
+    Forbidden(),
+
     #[error("Database error: {0}")]
     Db(#[from] sqlx::Error),
 
@@ -20,6 +23,7 @@ impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
         let status = match self {
             ApiError::NotFound() => StatusCode::NOT_FOUND,
+            ApiError::Forbidden() => StatusCode::FORBIDDEN,
             ApiError::Db(_) => StatusCode::INTERNAL_SERVER_ERROR,
             ApiError::Other(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };

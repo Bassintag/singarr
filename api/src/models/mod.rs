@@ -7,4 +7,6 @@ pub mod lidarr;
 pub mod lyrics;
 pub mod search;
 pub mod settings;
+pub mod status;
+pub mod token;
 pub mod track;

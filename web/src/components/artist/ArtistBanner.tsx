@@ -15,7 +15,7 @@ import {
 } from "../ui/Banner";
 import { AutomaticSearchArtistButton } from "./AutomaticSearchArtistButton";
 import { artistQueryOptions } from "@/queries/artist";
-import { Route } from "@/routes/artists/$id";
+import { Route } from "@/routes/(app)/artists/$id";
 import { SyncArtistButton } from "./SyncArtistButton";
 import { ScanArtistButton } from "./ScanArtistButton";
 

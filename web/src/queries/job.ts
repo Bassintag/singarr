@@ -1,6 +1,6 @@
 import type { AppEvent } from "@/domain/event";
 import type { Job, JobPayload } from "@/domain/job";
-import { listenToEvents } from "@/socket";
+import { useSocketState } from "@/hooks/socket/useSocketState";
 import { fetchApi } from "@/utils/api";
 import { invalidateAll } from "@/utils/query";
 import { mutationOptions } from "@tanstack/react-query";
@@ -18,7 +18,8 @@ export function createJobMutationOptions() {
             resolve();
           }
         };
-        const unsubscribe = listenToEvents((e) => {
+
+        const unsubscribe = useSocketState.getState().listen((e) => {
           if (jobId === null) {
             buffered.push(e);
           } else {

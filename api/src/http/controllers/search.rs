@@ -12,7 +12,7 @@ use crate::{
 };
 
 pub fn routes() -> Router<Arc<AppState>> {
-    return Router::new().route("/", routing::get(create));
+    Router::new().route("/", routing::get(create))
 }
 
 async fn create(

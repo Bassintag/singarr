@@ -5,4 +5,6 @@ pub mod lyrics;
 pub mod search;
 pub mod settings;
 pub mod socket;
+pub mod status;
+pub mod token;
 pub mod track;

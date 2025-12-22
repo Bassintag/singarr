@@ -1,18 +1,8 @@
-import {
-  Navbar,
-  NavbarActions,
-  NavbarApp,
-  NavbarTitle,
-} from "@/components/layout/Navbar";
-import { Sidebar, SidebarLink } from "@/components/layout/Sidebar";
-import { LibrarySearchbar } from "@/components/library/LibrarySearchbar";
 import { AppNotifications } from "@/components/notification/Notification";
-import { Button } from "@/components/ui/Button";
 import { useNotificationState } from "@/hooks/notification/useNotificationState";
-import { useListenToEvents } from "@/hooks/useListenToEvents";
+import { useSocketListener } from "@/hooks/socket/useSocketListener";
 import { isDone } from "@/utils/job";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
-import { Disc3Icon, MusicIcon, SettingsIcon, UserIcon } from "lucide-react";
 import { useEffect } from "react";
 
 export const Route = createRootRoute({
@@ -20,7 +10,7 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
-  useListenToEvents((e) => {
+  useSocketListener((e) => {
     const state = useNotificationState.getState();
     console.log("Caught event:", e);
     state.handle(e);
@@ -36,38 +26,7 @@ function RootComponent() {
 
   return (
     <>
-      <Navbar>
-        <NavbarApp>
-          <NavbarTitle>Singarr</NavbarTitle>
-        </NavbarApp>
-        <NavbarActions>
-          <LibrarySearchbar />
-          <Button size="icon" variant="ghost">
-            <SettingsIcon />
-          </Button>
-        </NavbarActions>
-      </Navbar>
-      <Sidebar>
-        <SidebarLink to="/artists">
-          <UserIcon />
-          Artists
-        </SidebarLink>
-        <SidebarLink to="/albums">
-          <Disc3Icon />
-          Albums
-        </SidebarLink>
-        <SidebarLink to="/tracks">
-          <MusicIcon />
-          Tracks
-        </SidebarLink>
-        <SidebarLink to="/settings">
-          <SettingsIcon />
-          Settings
-        </SidebarLink>
-      </Sidebar>
-      <div className="ml-50 mt-16">
-        <Outlet />
-      </div>
+      <Outlet />
       <AppNotifications />
     </>
   );

@@ -14,7 +14,7 @@ import { DataTable, DataTablePagination } from "../ui/Table";
 import { CheckIcon, EyeIcon, XIcon } from "lucide-react";
 import { Button } from "../ui/Button";
 import { LyricsDialog } from "./LyricsDialog";
-import { Route } from "@/routes/artists/$id";
+import { Route } from "@/routes/(app)/artists/$id";
 
 const columns: ColumnDef<Lyrics>[] = [
   {

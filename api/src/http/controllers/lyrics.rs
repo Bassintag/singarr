@@ -16,11 +16,11 @@ use crate::{
 };
 
 pub fn routes() -> Router<Arc<AppState>> {
-    return Router::new()
+    Router::new()
         .route("/", routing::get(list))
         .route("/:id", routing::get(get))
         .route("/:id", routing::delete(delete))
-        .route("/:id/content", routing::get(get_content));
+        .route("/:id/content", routing::get(get_content))
 }
 
 pub async fn list(

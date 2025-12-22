@@ -5,9 +5,9 @@ use axum::{extract::State, routing, Json, Router};
 use crate::{http::error::ApiError, models::settings::Settings, state::AppState};
 
 pub fn routes() -> Router<Arc<AppState>> {
-    return Router::new()
+    Router::new()
         .route("/", routing::get(get))
-        .route("/", routing::put(set));
+        .route("/", routing::put(set))
 }
 
 async fn get(State(state): State<Arc<AppState>>) -> Json<Settings> {

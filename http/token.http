@@ -1,0 +1,13 @@
+@apiUrl = http://localhost:3000
+
+###
+
+# @name create
+
+POST {{apiUrl}}/tokens
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "admin"
+}

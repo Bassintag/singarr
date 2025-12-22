@@ -8,4 +8,7 @@ pub struct AppArgs {
 
     #[arg(long, env = "SETTINGS_PATH", default_value = "./data/settings.json")]
     pub settings_path: String,
+
+    #[arg(long, env = "JWT_SECRET")]
+    pub jwt_secret: Option<String>,
 }

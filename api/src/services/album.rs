@@ -117,7 +117,7 @@ impl AlbumSerivce {
     pub async fn find(&self, id: i64) -> Result<AlbumWithStats> {
         let query = format!(
             r#"{SELECT} 
-            WHERE a."id" = $1"#
+            WHERE al."id" = $1"#
         );
         let row: AlbumRow = sqlx::query_as(query.as_str())
             .bind(id)

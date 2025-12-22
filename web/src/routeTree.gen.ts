@@ -9,128 +9,206 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TracksIndexRouteImport } from './routes/tracks/index'
-import { Route as SettingsIndexRouteImport } from './routes/settings/index'
-import { Route as ArtistsIndexRouteImport } from './routes/artists/index'
-import { Route as AlbumsIndexRouteImport } from './routes/albums/index'
-import { Route as ArtistsIdRouteImport } from './routes/artists/$id'
+import { Route as appRouteRouteImport } from './routes/(app)/route'
+import { Route as LoginIndexRouteImport } from './routes/login/index'
+import { Route as appIndexRouteImport } from './routes/(app)/index'
+import { Route as appTracksIndexRouteImport } from './routes/(app)/tracks/index'
+import { Route as appSettingsIndexRouteImport } from './routes/(app)/settings/index'
+import { Route as appArtistsIndexRouteImport } from './routes/(app)/artists/index'
+import { Route as appAlbumsIndexRouteImport } from './routes/(app)/albums/index'
+import { Route as appArtistsIdRouteImport } from './routes/(app)/artists/$id'
 
-const TracksIndexRoute = TracksIndexRouteImport.update({
+const appRouteRoute = appRouteRouteImport.update({
+  id: '/(app)',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginIndexRoute = LoginIndexRouteImport.update({
+  id: '/login/',
+  path: '/login/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const appIndexRoute = appIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appTracksIndexRoute = appTracksIndexRouteImport.update({
   id: '/tracks/',
   path: '/tracks/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => appRouteRoute,
 } as any)
-const SettingsIndexRoute = SettingsIndexRouteImport.update({
+const appSettingsIndexRoute = appSettingsIndexRouteImport.update({
   id: '/settings/',
   path: '/settings/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => appRouteRoute,
 } as any)
-const ArtistsIndexRoute = ArtistsIndexRouteImport.update({
+const appArtistsIndexRoute = appArtistsIndexRouteImport.update({
   id: '/artists/',
   path: '/artists/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => appRouteRoute,
 } as any)
-const AlbumsIndexRoute = AlbumsIndexRouteImport.update({
+const appAlbumsIndexRoute = appAlbumsIndexRouteImport.update({
   id: '/albums/',
   path: '/albums/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => appRouteRoute,
 } as any)
-const ArtistsIdRoute = ArtistsIdRouteImport.update({
+const appArtistsIdRoute = appArtistsIdRouteImport.update({
   id: '/artists/$id',
   path: '/artists/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => appRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/artists/$id': typeof ArtistsIdRoute
-  '/albums': typeof AlbumsIndexRoute
-  '/artists': typeof ArtistsIndexRoute
-  '/settings': typeof SettingsIndexRoute
-  '/tracks': typeof TracksIndexRoute
+  '/': typeof appIndexRoute
+  '/login': typeof LoginIndexRoute
+  '/artists/$id': typeof appArtistsIdRoute
+  '/albums': typeof appAlbumsIndexRoute
+  '/artists': typeof appArtistsIndexRoute
+  '/settings': typeof appSettingsIndexRoute
+  '/tracks': typeof appTracksIndexRoute
 }
 export interface FileRoutesByTo {
-  '/artists/$id': typeof ArtistsIdRoute
-  '/albums': typeof AlbumsIndexRoute
-  '/artists': typeof ArtistsIndexRoute
-  '/settings': typeof SettingsIndexRoute
-  '/tracks': typeof TracksIndexRoute
+  '/': typeof appIndexRoute
+  '/login': typeof LoginIndexRoute
+  '/artists/$id': typeof appArtistsIdRoute
+  '/albums': typeof appAlbumsIndexRoute
+  '/artists': typeof appArtistsIndexRoute
+  '/settings': typeof appSettingsIndexRoute
+  '/tracks': typeof appTracksIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/artists/$id': typeof ArtistsIdRoute
-  '/albums/': typeof AlbumsIndexRoute
-  '/artists/': typeof ArtistsIndexRoute
-  '/settings/': typeof SettingsIndexRoute
-  '/tracks/': typeof TracksIndexRoute
+  '/(app)': typeof appRouteRouteWithChildren
+  '/(app)/': typeof appIndexRoute
+  '/login/': typeof LoginIndexRoute
+  '/(app)/artists/$id': typeof appArtistsIdRoute
+  '/(app)/albums/': typeof appAlbumsIndexRoute
+  '/(app)/artists/': typeof appArtistsIndexRoute
+  '/(app)/settings/': typeof appSettingsIndexRoute
+  '/(app)/tracks/': typeof appTracksIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/artists/$id' | '/albums' | '/artists' | '/settings' | '/tracks'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/artists/$id'
+    | '/albums'
+    | '/artists'
+    | '/settings'
+    | '/tracks'
   fileRoutesByTo: FileRoutesByTo
-  to: '/artists/$id' | '/albums' | '/artists' | '/settings' | '/tracks'
+  to:
+    | '/'
+    | '/login'
+    | '/artists/$id'
+    | '/albums'
+    | '/artists'
+    | '/settings'
+    | '/tracks'
   id:
     | '__root__'
-    | '/artists/$id'
-    | '/albums/'
-    | '/artists/'
-    | '/settings/'
-    | '/tracks/'
+    | '/(app)'
+    | '/(app)/'
+    | '/login/'
+    | '/(app)/artists/$id'
+    | '/(app)/albums/'
+    | '/(app)/artists/'
+    | '/(app)/settings/'
+    | '/(app)/tracks/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  ArtistsIdRoute: typeof ArtistsIdRoute
-  AlbumsIndexRoute: typeof AlbumsIndexRoute
-  ArtistsIndexRoute: typeof ArtistsIndexRoute
-  SettingsIndexRoute: typeof SettingsIndexRoute
-  TracksIndexRoute: typeof TracksIndexRoute
+  appRouteRoute: typeof appRouteRouteWithChildren
+  LoginIndexRoute: typeof LoginIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/tracks/': {
-      id: '/tracks/'
+    '/(app)': {
+      id: '/(app)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof appRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login/': {
+      id: '/login/'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(app)/': {
+      id: '/(app)/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof appIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/tracks/': {
+      id: '/(app)/tracks/'
       path: '/tracks'
       fullPath: '/tracks'
-      preLoaderRoute: typeof TracksIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof appTracksIndexRouteImport
+      parentRoute: typeof appRouteRoute
     }
-    '/settings/': {
-      id: '/settings/'
+    '/(app)/settings/': {
+      id: '/(app)/settings/'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof SettingsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof appSettingsIndexRouteImport
+      parentRoute: typeof appRouteRoute
     }
-    '/artists/': {
-      id: '/artists/'
+    '/(app)/artists/': {
+      id: '/(app)/artists/'
       path: '/artists'
       fullPath: '/artists'
-      preLoaderRoute: typeof ArtistsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof appArtistsIndexRouteImport
+      parentRoute: typeof appRouteRoute
     }
-    '/albums/': {
-      id: '/albums/'
+    '/(app)/albums/': {
+      id: '/(app)/albums/'
       path: '/albums'
       fullPath: '/albums'
-      preLoaderRoute: typeof AlbumsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof appAlbumsIndexRouteImport
+      parentRoute: typeof appRouteRoute
     }
-    '/artists/$id': {
-      id: '/artists/$id'
+    '/(app)/artists/$id': {
+      id: '/(app)/artists/$id'
       path: '/artists/$id'
       fullPath: '/artists/$id'
-      preLoaderRoute: typeof ArtistsIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof appArtistsIdRouteImport
+      parentRoute: typeof appRouteRoute
     }
   }
 }
 
+interface appRouteRouteChildren {
+  appIndexRoute: typeof appIndexRoute
+  appArtistsIdRoute: typeof appArtistsIdRoute
+  appAlbumsIndexRoute: typeof appAlbumsIndexRoute
+  appArtistsIndexRoute: typeof appArtistsIndexRoute
+  appSettingsIndexRoute: typeof appSettingsIndexRoute
+  appTracksIndexRoute: typeof appTracksIndexRoute
+}
+
+const appRouteRouteChildren: appRouteRouteChildren = {
+  appIndexRoute: appIndexRoute,
+  appArtistsIdRoute: appArtistsIdRoute,
+  appAlbumsIndexRoute: appAlbumsIndexRoute,
+  appArtistsIndexRoute: appArtistsIndexRoute,
+  appSettingsIndexRoute: appSettingsIndexRoute,
+  appTracksIndexRoute: appTracksIndexRoute,
+}
+
+const appRouteRouteWithChildren = appRouteRoute._addFileChildren(
+  appRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  ArtistsIdRoute: ArtistsIdRoute,
-  AlbumsIndexRoute: AlbumsIndexRoute,
-  ArtistsIndexRoute: ArtistsIndexRoute,
-  SettingsIndexRoute: SettingsIndexRoute,
-  TracksIndexRoute: TracksIndexRoute,
+  appRouteRoute: appRouteRouteWithChildren,
+  LoginIndexRoute: LoginIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

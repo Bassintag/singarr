@@ -1,10 +1,10 @@
-import { ArtistTable } from "@/components/artist/ArtistTable";
 import { SyncLibraryButton } from "@/components/library/SyncLibraryButton";
+import { TrackTable } from "@/components/track/TrackTable";
 import { Banner, BannerActions } from "@/components/ui/Banner";
 import { createFileRoute } from "@tanstack/react-router";
 import { RefreshCwIcon } from "lucide-react";
 
-export const Route = createFileRoute("/artists/")({
+export const Route = createFileRoute("/(app)/tracks/")({
   component: RouteComponent,
 });
 
@@ -19,7 +19,7 @@ function RouteComponent() {
           </SyncLibraryButton>
         </BannerActions>
       </Banner>
-      <ArtistTable />
+      <TrackTable />
     </div>
   );
 }

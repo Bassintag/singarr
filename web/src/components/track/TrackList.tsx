@@ -1,6 +1,6 @@
 import type { Track } from "@/domain/track";
 import { tracksQueryOptions } from "@/queries/track";
-import { Route } from "@/routes/artists/$id";
+import { Route } from "@/routes/(app)/artists/$id";
 import { cn } from "@/utils/cn";
 import { useQuery } from "@tanstack/react-query";
 import { CheckIcon, SearchIcon, UserIcon, XIcon } from "lucide-react";

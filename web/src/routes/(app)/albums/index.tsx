@@ -4,7 +4,7 @@ import { Banner, BannerActions } from "@/components/ui/Banner";
 import { createFileRoute } from "@tanstack/react-router";
 import { RefreshCwIcon } from "lucide-react";
 
-export const Route = createFileRoute("/albums/")({
+export const Route = createFileRoute("/(app)/albums/")({
   component: RouteComponent,
 });
 

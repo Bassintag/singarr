@@ -41,8 +41,10 @@ impl SettingsService {
     }
 
     async fn save(&self) -> Result<()> {
-        let settings = self.state.read().await;
-        let data = serde_json::to_string_pretty(&*settings)?;
+        let data = {
+            let settings = self.state.read().await;
+            serde_json::to_string_pretty(&*settings)?
+        };
         tokio::fs::write(&self.path, data).await?;
         Ok(())
     }

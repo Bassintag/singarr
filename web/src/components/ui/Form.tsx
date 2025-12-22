@@ -1,15 +1,18 @@
 import { cn } from "@/utils/cn";
 import { Field as FieldPrimitve } from "@base-ui/react/field";
+import { Fieldset as FieldsetPrimitve } from "@base-ui/react/fieldset";
 import { Form as FormPrimitive } from "@base-ui/react/form";
 import { createContext, use, type ComponentProps } from "react";
 import {
   Controller,
   FormProvider,
-  useForm,
+  useFormContext,
+  useFormState,
   type FieldPath,
   type FieldValues,
   type UseFormReturn,
 } from "react-hook-form";
+import { Button } from "./Button";
 
 export function Form<T extends FieldValues>({
   form,
@@ -18,9 +21,33 @@ export function Form<T extends FieldValues>({
   ...rest
 }: ComponentProps<typeof FormPrimitive> & { form: UseFormReturn<T> }) {
   return (
-    <FormPrimitive className={cn("flex flex-col gap-4", className)} {...rest}>
+    <FormPrimitive className={cn("flex flex-col gap-8", className)} {...rest}>
       <FormProvider {...form}>{children}</FormProvider>
     </FormPrimitive>
+  );
+}
+
+export function FormGroup({
+  className,
+  ...rest
+}: ComponentProps<typeof FieldsetPrimitve.Root>) {
+  return (
+    <FieldsetPrimitve.Root
+      className={cn("flex flex-col gap-4", className)}
+      {...rest}
+    />
+  );
+}
+
+export function FormGroupTitle({
+  className,
+  ...rest
+}: ComponentProps<typeof FieldsetPrimitve.Legend>) {
+  return (
+    <FieldsetPrimitve.Legend
+      className={cn("text-lg pb-2  border-b border-gray-700", className)}
+      {...rest}
+    />
   );
 }
 
@@ -45,8 +72,15 @@ export function FormField({
   className,
   ...rest
 }: ComponentProps<typeof FieldPrimitve.Root>) {
+  const name = use(FormControllerContext);
+  const { getFieldState, formState } = useFormContext();
+  const { invalid, isDirty, isTouched } = getFieldState(name, formState);
+
   return (
     <FieldPrimitve.Root
+      dirty={isDirty}
+      touched={isTouched}
+      invalid={invalid}
       className={cn("flex flex-col gap-1", className)}
       {...rest}
     />
@@ -78,16 +112,23 @@ export function FormError({
   ...rest
 }: ComponentProps<typeof FieldPrimitve.Error>) {
   const name = use(FormControllerContext);
-  const { getFieldState, formState } = useForm();
+  const { getFieldState, formState } = useFormContext();
   const { error } = getFieldState(name, formState);
   const body = error ? String(error?.message) : children;
 
-  if (!body) {
-    return null;
-  }
   return (
-    <FieldPrimitve.Error className={cn("text-failure", className)} {...rest}>
+    <FieldPrimitve.Error
+      match={error != null}
+      className={cn("text-failure text-xs", className)}
+      {...rest}
+    >
       {body}
     </FieldPrimitve.Error>
   );
+}
+
+export function SubmitButton(props: ComponentProps<typeof Button>) {
+  const { isSubmitting } = useFormState();
+
+  return <Button type="submit" disabled={isSubmitting} {...props} />;
 }
