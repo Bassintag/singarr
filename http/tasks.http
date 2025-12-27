@@ -1,0 +1,13 @@
+@apiUrl = http://localhost:3000
+@token = eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NjY3NjIxMjAsImV4cCI6MTc2Njc2MjE4MCwidHlwIjoiYWNjZXNzIn0.K9Fa8zXrlABGvJ-ZFnkMvWi84DHrm0NUlh-cv36mn4c
+
+# @name retrieve
+
+GET {{apiUrl}}/tasks
+
+###
+
+# @name get
+
+GET {{apiUrl}}/tasks
+Authorization: Bearer {{token}}

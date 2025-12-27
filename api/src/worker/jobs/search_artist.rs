@@ -2,10 +2,7 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    models::{
-        album::{AlbumsFilters, AlbumsQuery},
-        job::JobContext,
-    },
+    models::{album::AlbumsFilters, job::JobContext},
     worker::jobs::search_album::{search_album, SearchAlbumParams},
 };
 
@@ -19,12 +16,12 @@ pub async fn search_artist(context: JobContext<SearchArtistParams>) -> Result<()
     let albums = context
         .state
         .album_service
-        .find_many(&AlbumsQuery {
-            filters: AlbumsFilters {
+        .find_many(
+            Some(&AlbumsFilters {
                 artist_id: Some(context.params.artist_id),
-            },
-            pageable: Default::default(),
-        })
+            }),
+            None,
+        )
         .await?;
 
     for album in albums.iter() {

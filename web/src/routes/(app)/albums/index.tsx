@@ -10,7 +10,7 @@ export const Route = createFileRoute("/(app)/albums/")({
 
 function RouteComponent() {
   return (
-    <div>
+    <>
       <Banner>
         <BannerActions>
           <SyncLibraryButton variant="ghost" size="sm">
@@ -20,6 +20,6 @@ function RouteComponent() {
         </BannerActions>
       </Banner>
       <AlbumTable />
-    </div>
+    </>
   );
 }

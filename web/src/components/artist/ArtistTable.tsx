@@ -11,18 +11,23 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 import { TrackStatsProgress } from "../stats/TrackStatsProgress";
-import { Link } from "../ui/Link";
-import { DataTable, DataTablePagination } from "../ui/Table";
+import {
+  DataTable,
+  DataTableContent,
+  DataTablePagination,
+  DataTablePlaceholder,
+  TableContainer,
+} from "../ui/Table";
+import { ArtistCell } from "./ArtistCell";
 
 const columns: ColumnDef<ArtistWithStats>[] = [
   {
     id: "title",
     header: "Title",
-    cell: (data) => (
-      <Link to={`/artists/$id`} params={{ id: data.row.original.id }}>
-        {data.row.original.name}
-      </Link>
-    ),
+    meta: {
+      className: "max-md:w-58",
+    },
+    cell: (data) => <ArtistCell artist={data.row.original} />,
   },
   {
     id: "progress",
@@ -51,9 +56,12 @@ export function ArtistTable() {
   });
 
   return (
-    <>
-      <DataTable className="table-fixed" table={table} />
-      <DataTablePagination table={table} />
-    </>
+    <DataTable table={table}>
+      <TableContainer>
+        <DataTableContent className="table-fixed" />
+      </TableContainer>
+      <DataTablePlaceholder />
+      <DataTablePagination />
+    </DataTable>
   );
 }

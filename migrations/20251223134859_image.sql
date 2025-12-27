@@ -1,0 +1,1 @@
+ALTER TABLE Artist ADD COLUMN "image_path" TEXT;

@@ -2,6 +2,10 @@ import z from "zod";
 
 export const settingsSchema = z.object({
   rootFolder: z.string(),
+  lyrics: z.object({
+    minScore: z.number().min(0).max(1),
+    upgrade: z.boolean(),
+  }),
   auth: z.union([
     z.object({ enabled: z.literal(false) }),
     z.object({

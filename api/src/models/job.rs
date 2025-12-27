@@ -12,9 +12,11 @@ use crate::{
         import_lyrics::{import_lyrics, ImportLyricsParams},
         scan_album::{scan_album, ScanAlbumParams},
         scan_artist::{scan_artist, ScanArtistParams},
+        scan_library::scan_library,
         scan_track::{scan_track, ScanTrackParams},
         search_album::{search_album, SearchAlbumParams},
         search_artist::{search_artist, SearchArtistParams},
+        search_library::search_library,
         search_track::{search_track, SearchTrackParams},
         sync_artist::{sync_artist, SyncArtistParams},
         sync_library::sync_library,
@@ -31,11 +33,13 @@ pub enum JobPayload {
     ImportLyrics(ImportLyricsParams),
 
     // Scan
+    ScanLibrary,
     ScanArtist(ScanArtistParams),
     ScanAlbum(ScanAlbumParams),
     ScanTrack(ScanTrackParams),
 
     // Search
+    SearchLibrary,
     SearchArtist(SearchArtistParams),
     SearchAlbum(SearchAlbumParams),
     SearchTrack(SearchTrackParams),
@@ -84,6 +88,7 @@ impl FromStr for JobStatus {
 #[serde(rename_all = "camelCase")]
 pub struct Job {
     pub id: i64,
+    pub created_at: String,
     pub payload: JobPayload,
     pub status: JobStatus,
     pub error: Option<String>,
@@ -114,10 +119,12 @@ impl Job {
 
             JobPayload::ImportLyrics(p) => self.dispatch(state, p, import_lyrics).await,
 
+            JobPayload::ScanLibrary => self.dispatch(state, &(), scan_library).await,
             JobPayload::ScanArtist(p) => self.dispatch(state, p, scan_artist).await,
             JobPayload::ScanAlbum(p) => self.dispatch(state, p, scan_album).await,
             JobPayload::ScanTrack(p) => self.dispatch(state, p, scan_track).await,
 
+            JobPayload::SearchLibrary => self.dispatch(state, &(), search_library).await,
             JobPayload::SearchArtist(p) => self.dispatch(state, p, search_artist).await,
             JobPayload::SearchAlbum(p) => self.dispatch(state, p, search_album).await,
             JobPayload::SearchTrack(p) => self.dispatch(state, p, search_track).await,

@@ -4,7 +4,7 @@ use sqlx::{prelude::FromRow, Pool, QueryBuilder, Sqlite};
 use crate::models::{
     album::{Album, AlbumWithArtist},
     artist::Artist,
-    generic::{IdRow, Page, TotalRow},
+    generic::{IdRow, Page, Pageable, TotalRow},
     lidarr::{LidarrTrack, LidarrTrackFile},
     track::{Track, TracksFilters, TracksQuery},
 };
@@ -20,17 +20,22 @@ struct TrackRow {
 
     pub artist_id: i64,
     pub artist_name: String,
+    pub artist_description: Option<String>,
+    pub artist_image_path: Option<String>,
     pub artist_lidarr_id: Option<i64>,
     pub artist_musicbrainz_id: Option<String>,
 
     pub album_id: i64,
     pub album_title: String,
+    pub album_description: Option<String>,
     pub album_cover_path: Option<String>,
     pub album_lidarr_id: Option<i64>,
     pub album_musicbrainz_id: Option<String>,
 
     pub album_artist_id: i64,
     pub album_artist_name: String,
+    pub album_artist_description: Option<String>,
+    pub album_artist_image_path: Option<String>,
     pub album_artist_lidarr_id: Option<i64>,
     pub album_artist_musicbrainz_id: Option<String>,
 }
@@ -47,6 +52,8 @@ impl From<TrackRow> for Track {
             artist: Artist {
                 id: value.artist_id,
                 name: value.artist_name,
+                description: value.artist_description,
+                image_path: value.artist_image_path,
                 lidarr_id: value.artist_lidarr_id,
                 musicbrainz_id: value.artist_musicbrainz_id,
             },
@@ -54,6 +61,7 @@ impl From<TrackRow> for Track {
                 album: Album {
                     id: value.album_id,
                     title: value.album_title,
+                    description: value.album_description,
                     cover_path: value.album_cover_path,
                     lidarr_id: value.album_lidarr_id,
                     musicbrainz_id: value.album_musicbrainz_id,
@@ -61,6 +69,8 @@ impl From<TrackRow> for Track {
                 artist: Artist {
                     id: value.album_artist_id,
                     name: value.album_artist_name,
+                    description: value.album_artist_description,
+                    image_path: value.album_artist_image_path,
                     lidarr_id: value.album_artist_lidarr_id,
                     musicbrainz_id: value.album_artist_musicbrainz_id,
                 },
@@ -79,17 +89,22 @@ const SELECT: &str = r#"SELECT
 
     ar."id" as "artist_id",
     ar."name" as "artist_name",
+    ar."description" as "artist_description",
+    ar."image_path" as "artist_image_path",
     ar."lidarr_id" as "artist_lidarr_id",
     ar."musicbrainz_id" as "artist_musicbrainz_id",
 
     al."id" as "album_id",
     al."title" as "album_title",
+    al."description" as "album_description",
     al."cover_path" as "album_cover_path",
     al."lidarr_id" as "album_lidarr_id",
     al."musicbrainz_id" as "album_musicbrainz_id",
 
     al_ar."id" as "album_artist_id",
     al_ar."name" as "album_artist_name",
+    al_ar."description" as "album_artist_description",
+    al_ar."image_path" as "album_artist_image_path",
     al_ar."lidarr_id" as "album_artist_lidarr_id",
     al_ar."musicbrainz_id" as "album_artist_musicbrainz_id"
 FROM track t
@@ -128,19 +143,30 @@ impl TrackService {
         Ok(row.total)
     }
 
-    pub async fn find_many(&self, query: &TracksQuery) -> Result<Vec<Track>> {
-        let (limit, offset) = query.pageable.to_limit_offset();
+    pub async fn find_many(
+        &self,
+        filters_opt: Option<&TracksFilters>,
+        pageable_opt: Option<&Pageable>,
+    ) -> Result<Vec<Track>> {
         let mut qb = sqlx::QueryBuilder::new(SELECT);
-        Self::push_filters(&mut qb, &query.filters);
+        if let Some(filters) = filters_opt {
+            Self::push_filters(&mut qb, filters);
+        }
         qb.push(r#" ORDER BY ar."name" ASC, al."title" ASC, t."track_number" ASC"#);
-        qb.push(" LIMIT ").push_bind(limit);
-        qb.push(" OFFSET ").push_bind(offset);
+        if let Some(pageable) = pageable_opt {
+            let (limit, offset) = pageable.to_limit_offset();
+            qb.push(" LIMIT ").push_bind(limit);
+            qb.push(" OFFSET ").push_bind(offset);
+        }
         let rows: Vec<TrackRow> = qb.build_query_as().fetch_all(&self.pool).await?;
         Ok(rows.into_iter().map(Track::from).collect())
     }
 
     pub async fn find_page(&self, query: &TracksQuery) -> Result<Page<Track>> {
-        let (total, items) = tokio::try_join!(self.count(&query.filters), self.find_many(query))?;
+        let (total, items) = tokio::try_join!(
+            self.count(&query.filters),
+            self.find_many(Some(&query.filters), Some(&query.pageable))
+        )?;
         Ok(Page { total, items })
     }
 

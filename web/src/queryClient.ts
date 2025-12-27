@@ -9,9 +9,10 @@ import { useTokenState } from "./hooks/token/useTokenState";
 
 const queryCache = new QueryCache({
   onError: (e) => {
+    console.log(e);
     if (e instanceof ApiError) {
-      if (e.response.status === 401) {
-        useTokenState.getState().set(undefined);
+      if (e.response.status === 401 || e.response.status === 403) {
+        useTokenState.getState().set(null);
         router.navigate({ to: "/login" });
       }
     }
@@ -24,7 +25,10 @@ export const queryClient = new QueryClient({
       placeholderData: keepPreviousData,
       retry: (retryCount, e) => {
         if (retryCount > 3) return false;
-        return !(e instanceof ApiError) || e.response.status != 401;
+        return (
+          !(e instanceof ApiError) ||
+          (e.response.status !== 401 && e.response.status !== 403)
+        );
       },
     },
   },

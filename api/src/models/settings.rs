@@ -6,6 +6,7 @@ pub struct Settings {
     pub root_folder: String,
     pub auth: AuthSettings,
     pub lidarr: LidarrSettings,
+    pub lyrics: LyricsSettings,
 }
 
 impl Default for Settings {
@@ -14,6 +15,7 @@ impl Default for Settings {
             root_folder: "/data".into(),
             auth: AuthSettings::default(),
             lidarr: LidarrSettings::default(),
+            lyrics: LyricsSettings::default(),
         }
     }
 }
@@ -55,6 +57,22 @@ impl Default for LidarrSettings {
             base_url: "http://localhost:8696/".into(),
             api_key: None,
             http_timeout: 60,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default, rename_all = "camelCase")]
+pub struct LyricsSettings {
+    pub min_score: f64,
+    pub upgrade: bool,
+}
+
+impl Default for LyricsSettings {
+    fn default() -> Self {
+        Self {
+            min_score: 0.75,
+            upgrade: true,
         }
     }
 }

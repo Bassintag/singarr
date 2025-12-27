@@ -10,50 +10,34 @@ import {
   type PaginationState,
 } from "@tanstack/react-table";
 import { useState } from "react";
+import { ArtistCell } from "../artist/ArtistCell";
 import { TrackStatsProgress } from "../stats/TrackStatsProgress";
-import { Link } from "../ui/Link";
-import { DataTable, DataTablePagination } from "../ui/Table";
+import {
+  DataTable,
+  DataTableContent,
+  DataTablePagination,
+  DataTablePlaceholder,
+  TableContainer,
+} from "../ui/Table";
+import { AlbumCell } from "./AlbumCell";
 
 const columns: ColumnDef<AlbumWithStats>[] = [
   {
     id: "title",
     header: "Title",
-    meta: {
-      className: "w-1/2",
-    },
-    cell: (data) => (
-      <Link
-        to={`/artists/$id`}
-        params={{ id: data.row.original.artist.id }}
-        search={{ albumId: data.row.original.id }}
-        className="block truncate"
-      >
-        {data.row.original.title}
-      </Link>
-    ),
+    meta: { className: "w-1/2 max-md:w-64" },
+    cell: (data) => <AlbumCell album={data.row.original} />,
   },
   {
     id: "artist",
     header: "Artist",
-    meta: {
-      className: "w-1/2",
-    },
-    cell: (data) => (
-      <Link
-        to={`/artists/$id`}
-        params={{ id: data.row.original.artist.id }}
-        className="block truncate"
-      >
-        {data.row.original.artist.name}
-      </Link>
-    ),
+    meta: { className: "w-1/2 max-md:w-48" },
+    cell: (data) => <ArtistCell artist={data.row.original.artist} />,
   },
   {
     id: "progress",
     header: "Lyrics",
-    meta: {
-      className: "w-64",
-    },
+    meta: { className: "w-64" },
     cell: (data) => <TrackStatsProgress stats={data.row.original.stats} />,
   },
 ];
@@ -75,9 +59,12 @@ export function AlbumTable() {
   });
 
   return (
-    <>
-      <DataTable className="table-fixed" table={table} />
-      <DataTablePagination table={table} />
-    </>
+    <DataTable table={table}>
+      <TableContainer>
+        <DataTableContent className="table-fixed" />
+      </TableContainer>
+      <DataTablePlaceholder />
+      <DataTablePagination />
+    </DataTable>
   );
 }

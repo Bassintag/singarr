@@ -21,7 +21,7 @@ export function Switch({
       )}
       {...rest}
     >
-      <Primitive.Thumb className="shrink-0 absolute size-5 bg-gray-600 rounded-full top-0.5 left-0.5 data-checked:left-6 data-checked:bg-gray-200 transition-[left]" />
+      <Primitive.Thumb className="shrink-0 absolute size-5 bg-gray-600 rounded-full top-0.5 left-0.5 data-checked:left-6 data-checked:bg-gray-300 transition-[left]" />
     </Primitive.Root>
   );
 }

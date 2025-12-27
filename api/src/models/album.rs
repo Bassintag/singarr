@@ -11,6 +11,7 @@ use crate::models::{
 pub struct Album {
     pub id: i64,
     pub title: String,
+    pub description: Option<String>,
     pub cover_path: Option<String>,
     pub lidarr_id: Option<i64>,
     pub musicbrainz_id: Option<String>,

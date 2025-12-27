@@ -10,69 +10,42 @@ import {
   type PaginationState,
 } from "@tanstack/react-table";
 import { useState } from "react";
-import { Link } from "../ui/Link";
-import { DataTable, DataTablePagination } from "../ui/Table";
+import { AlbumCell } from "../album/AlbumCell";
+import { ArtistCell } from "../artist/ArtistCell";
+import {
+  DataTable,
+  DataTableContent,
+  DataTablePagination,
+  DataTablePlaceholder,
+  TableContainer,
+} from "../ui/Table";
+import { TrackCell } from "./TrackCell";
 
 const columns: ColumnDef<Track>[] = [
   {
     id: "trackNumber",
     accessorKey: "trackNumber",
     header: "#",
-    meta: {
-      className: "w-12 text-center",
-    },
+    meta: { className: "w-12 text-center" },
   },
   {
     id: "title",
     header: "Title",
-    meta: {
-      className: "overflow-hidden",
-    },
-    cell: (data) => (
-      <Link
-        to={`/artists/$id`}
-        params={{ id: data.row.original.artist.id }}
-        search={{
-          albumId: data.row.original.album.id,
-          trackId: data.row.original.id,
-        }}
-        className="block truncate"
-      >
-        {data.row.original.title}
-      </Link>
-    ),
-  },
-  {
-    id: "artist",
-    header: "Artist",
-    meta: { className: "w-1/4 overflow-hidden" },
-    cell: (data) => (
-      <Link
-        to={`/artists/$id`}
-        params={{ id: data.row.original.artist.id }}
-        className="block truncate"
-      >
-        {data.row.original.artist.name}
-      </Link>
-    ),
+    meta: { className: "overflow-hidden max-md:w-64" },
+    cell: (data) => <TrackCell track={data.row.original} />,
   },
   {
     id: "album",
     header: "Album",
     enableResizing: false,
-    meta: {
-      className: "w-1/4 overflow-hidden",
-    },
-    cell: (data) => (
-      <Link
-        to={`/artists/$id`}
-        params={{ id: data.row.original.artist.id }}
-        search={{ albumId: data.row.original.album.id }}
-        className="block truncate"
-      >
-        {data.row.original.album.title}
-      </Link>
-    ),
+    meta: { className: "w-1/4 overflow-hidden max-md:w-64" },
+    cell: (data) => <AlbumCell album={data.row.original.album} />,
+  },
+  {
+    id: "artist",
+    header: "Artist",
+    meta: { className: "w-1/4 overflow-hidden max-md:w-48" },
+    cell: (data) => <ArtistCell artist={data.row.original.artist} />,
   },
 ];
 
@@ -93,9 +66,12 @@ export function TrackTable() {
   });
 
   return (
-    <>
-      <DataTable className="table-fixed" table={table} />
-      <DataTablePagination table={table} />
-    </>
+    <DataTable table={table}>
+      <TableContainer>
+        <DataTableContent className="table-fixed" />
+      </TableContainer>
+      <DataTablePlaceholder />
+      <DataTablePagination />
+    </DataTable>
   );
 }

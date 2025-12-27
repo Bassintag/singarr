@@ -1,16 +1,8 @@
-# Example docker compose
-
 services:
-  singarr:
-    build: .
-    container_name: singarr
+  nginx:
+    container_name: nginx
+    image: nginx:alpine
     ports:
-      - 80:80
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+      - "9000:80"
     volumes:
-      - ./data/docker:/data
-      - ./data/music:/music
-    restart: unless-stopped
+      - ./data/images:/usr/share/nginx/html:ro

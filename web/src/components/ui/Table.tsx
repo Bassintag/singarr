@@ -1,9 +1,15 @@
+import { usePagination } from "@/hooks/usePagination";
 import { cn } from "@/utils/cn";
 import { flexRender, type RowData, type Table } from "@tanstack/react-table";
-import type { ComponentProps } from "react";
-import { Button } from "./Button";
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from "lucide-react";
-import { usePagination } from "@/hooks/usePagination";
+import { createContext, use, type ComponentProps } from "react";
+import { Button } from "./Button";
+import { Link } from "./Link";
+import { AppImage } from "../layout/AppImage";
+
+export function TableContainer({ className, ...rest }: ComponentProps<"div">) {
+  return <div className={cn("overflow-x-auto", className)} {...rest} />;
+}
 
 export function Table({ className, ...rest }: ComponentProps<"table">) {
   return <table className={cn("w-full", className)} {...rest} />;
@@ -46,14 +52,22 @@ export function Tr({ className, ...rest }: ComponentProps<"tr">) {
 export function Th({ className, ...rest }: ComponentProps<"th">) {
   return (
     <th
-      className={cn("py-2 px-4 text-start font-normal", className)}
+      className={cn(
+        "h-10 px-4 text-start text-sm font-normal first:pl-6 last:pr-6",
+        className
+      )}
       {...rest}
     />
   );
 }
 
 export function Td({ className, ...rest }: ComponentProps<"td">) {
-  return <td className={cn("py-2 px-4 text-sm", className)} {...rest} />;
+  return (
+    <td
+      className={cn("py-2 px-4 text-sm first:pl-6 last:pr-6", className)}
+      {...rest}
+    />
+  );
 }
 
 declare module "@tanstack/react-table" {
@@ -65,12 +79,25 @@ declare module "@tanstack/react-table" {
   }
 }
 
+const DataTableContext = createContext<Table<unknown>>(null as never);
+
 export function DataTable<T>({
   table,
+  className,
   ...rest
-}: ComponentProps<"table"> & { table: Table<T> }) {
+}: ComponentProps<"div"> & { table: Table<T> }) {
   return (
-    <Table {...rest}>
+    <DataTableContext value={table as Table<unknown>}>
+      <div className={cn("flex flex-col", className)} {...rest} />
+    </DataTableContext>
+  );
+}
+
+export function DataTableContent(props: ComponentProps<typeof Table>) {
+  const table = use(DataTableContext);
+
+  return (
+    <Table {...props}>
       <THead>
         {table.getHeaderGroups().map((headerGroup) => (
           <Tr key={headerGroup.id}>
@@ -113,23 +140,46 @@ export function DataTable<T>({
   );
 }
 
-export function DataTablePagination<T>({
-  table,
+export function DataTablePlaceholder({
+  className,
+  children = "No items found",
+  ...rest
+}: ComponentProps<"div">) {
+  const table = use(DataTableContext);
+
+  return (
+    table.getRowCount() === 0 && (
+      <div
+        className={cn(
+          "py-4 text-center text-sm italic text-gray-400",
+          className
+        )}
+        {...rest}
+      >
+        {children}
+      </div>
+    )
+  );
+}
+
+export function DataTablePagination({
   className,
   ...rest
-}: ComponentProps<"div"> & { table: Table<T> }) {
+}: ComponentProps<"div">) {
+  const table = use(DataTableContext);
   const pagination = usePagination(table);
+
   return (
     <div
       className={cn(
-        "px-4 py-2 bg-gray-950 border-t border-gray-700 flex flex-row justify-between items-center gap-4",
+        "px-6 py-4 bg-gray-950 border-t border-gray-700 flex flex-col justify-between items-center gap-4 md:flex-row",
         className
       )}
       {...rest}
     >
       <div className="text-xs">
-        Show {pagination.startIndex + 1} to {pagination.endIndex} of{" "}
-        {pagination.count} entries
+        Show {Math.min(pagination.endIndex, pagination.startIndex + 1)} to{" "}
+        {pagination.endIndex} of {pagination.count} entries
       </div>
       <div className="flex flex-row items-center gap-2">
         <Button
@@ -174,5 +224,44 @@ export function DataTablePagination<T>({
         </Button>
       </div>
     </div>
+  );
+}
+
+export function LinkCell({ className, ...rest }: ComponentProps<typeof Link>) {
+  return (
+    <Link
+      className={cn("flex flex-row gap-2 items-center truncate", className)}
+      {...rest}
+    />
+  );
+}
+
+export function LinkCellImage({
+  className,
+  ...rest
+}: ComponentProps<typeof AppImage>) {
+  return (
+    <AppImage
+      className={cn(
+        "size-6 border border-gray-700 rounded shrink-0",
+        className
+      )}
+      {...rest}
+    />
+  );
+}
+
+export function LinkCellPlaceholder({
+  className,
+  ...rest
+}: ComponentProps<"div">) {
+  return (
+    <div
+      className={cn(
+        "size-6 flex items-center justify-center *:size-4 shrink-0 text-gray-400 bg-gray-950 border border-gray-700 rounded",
+        className
+      )}
+      {...rest}
+    />
   );
 }

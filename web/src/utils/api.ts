@@ -1,3 +1,4 @@
+import type { TokenPair, TokenPayload } from "@/domain/token";
 import { useTokenState } from "@/hooks/token/useTokenState";
 import * as qs from "qs";
 
@@ -20,11 +21,46 @@ export interface ApiRequestInit extends RequestInit {
   query?: unknown;
 }
 
+let tokenPromise: Promise<string> | null = null;
+
+function isExpired(payload: TokenPayload) {
+  return (payload.exp - 5) * 1000 < Date.now();
+}
+
+async function getToken() {
+  const tokens = useTokenState.getState().tokens;
+  if (tokens == null) {
+    return null;
+  }
+  if (!isExpired(tokens.accessPayload)) {
+    return tokens.access;
+  }
+  if (tokenPromise == null) {
+    if (isExpired(tokens.refreshPayload)) {
+      return null;
+    }
+    tokenPromise = new Promise<string>((resolve, reject) => {
+      fetchApi<TokenPair>("tokens", {
+        auth: false,
+        method: "POST",
+        json: { refreshToken: tokens.refresh },
+      })
+        .then((tokens) => {
+          useTokenState.getState().set(tokens);
+          resolve(tokens.access);
+        })
+        .catch(reject)
+        .finally(() => {
+          tokenPromise = null;
+        });
+    });
+  }
+  return tokenPromise;
+}
+
 export function resolveApiUrl(path: string) {
   const basePath = import.meta.env.PUBLIC_API_PATH;
-  if (basePath) {
-    path = `${basePath}${path}`;
-  }
+  if (basePath) path = `${basePath}${path}`;
   return new URL(path, import.meta.env.PUBLIC_API_URL ?? window.location.href);
 }
 
@@ -36,7 +72,7 @@ export async function fetchApi<T>(
   url.search = qs.stringify(query);
   init.headers = new Headers(init.headers);
   if (auth) {
-    const token = useTokenState.getState().tokens?.access;
+    const token = await getToken();
     if (token) {
       init.headers.set("Authorization", `Bearer ${token}`);
     }

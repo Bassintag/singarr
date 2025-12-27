@@ -8,7 +8,7 @@ use axum::{
 };
 use serde::Deserialize;
 
-use crate::state::AppState;
+use crate::{models::token::TokenClaims, state::AppState};
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -47,10 +47,14 @@ pub async fn auth_middleware(
 
     let token = extract_token(&request).ok_or(StatusCode::UNAUTHORIZED)?;
 
-    state
+    let payload = state
         .jwt_service
-        .decode::<()>(token.as_str())
+        .decode::<TokenClaims>(token.as_str())
         .map_err(|_| StatusCode::UNAUTHORIZED)?;
+
+    if payload.claims.typ != "access" {
+        return Err(StatusCode::UNAUTHORIZED);
+    }
 
     Ok(next.run(request).await)
 }

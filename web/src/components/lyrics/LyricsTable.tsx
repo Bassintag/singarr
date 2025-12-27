@@ -10,7 +10,13 @@ import {
   type PaginationState,
 } from "@tanstack/react-table";
 import { useState } from "react";
-import { DataTable, DataTablePagination } from "../ui/Table";
+import {
+  DataTable,
+  DataTableContent,
+  DataTablePagination,
+  DataTablePlaceholder,
+  TableContainer,
+} from "../ui/Table";
 import { CheckIcon, EyeIcon, XIcon } from "lucide-react";
 import { Button } from "../ui/Button";
 import { LyricsDialog } from "./LyricsDialog";
@@ -20,9 +26,7 @@ const columns: ColumnDef<Lyrics>[] = [
   {
     accessorKey: "filePath",
     header: "File Path",
-    meta: {
-      className: "w-full",
-    },
+    meta: {},
     cell: (data) => (
       <div className="font-mono">{data.row.original.filePath}</div>
     ),
@@ -31,7 +35,7 @@ const columns: ColumnDef<Lyrics>[] = [
     accessorKey: "synced",
     header: "Synced",
     meta: {
-      className: "w-0 text-center",
+      className: "w-20 text-center",
     },
     cell: (data) => (
       <div className="inline-block mx-auto">
@@ -46,7 +50,7 @@ const columns: ColumnDef<Lyrics>[] = [
   {
     header: "Actions",
     meta: {
-      className: "w-0 text-center",
+      className: "w-24 text-center",
     },
     cell: (data) => (
       <div className="flex flex-row justify-center gap-2 items-center">
@@ -82,9 +86,12 @@ export function LyricsTable() {
   });
 
   return (
-    <>
-      <DataTable table={table} />
-      <DataTablePagination table={table} />
-    </>
+    <DataTable table={table}>
+      <TableContainer>
+        <DataTableContent className="table-fixed" />
+      </TableContainer>
+      <DataTablePlaceholder />
+      <DataTablePagination />
+    </DataTable>
   );
 }

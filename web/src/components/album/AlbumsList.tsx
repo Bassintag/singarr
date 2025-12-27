@@ -7,13 +7,14 @@ import { useState, type ComponentProps } from "react";
 import { TrackStatsProgress } from "../stats/TrackStatsProgress";
 import { cn } from "@/utils/cn";
 import { TrackList } from "../track/TrackList";
+import { AppImage } from "../layout/AppImage";
 
 export function AlbumsList({ className, ...rest }: ComponentProps<"ol">) {
   const { id } = Route.useParams();
   const { data: page } = useQuery(albumsQueryOptions({ artistId: id }));
 
   return (
-    <ol className={cn("m-4 flex flex-col gap-4", className)} {...rest}>
+    <ol className={cn("flex flex-col gap-4", className)} {...rest}>
       {page?.items.map((album) => (
         <AlbumsListRow key={album.id} album={album} />
       ))}
@@ -37,9 +38,18 @@ export function AlbumsListRow({ album }: { album: AlbumWithStats }) {
         }
         onClick={() => setOpen(!open)}
       >
-        <ChevronDownIcon className="size-4.5 transition-transform group-data-[state=open]:rotate-180" />
-        <div className="text-base">{album.title}</div>
-        <TrackStatsProgress className="w-64 ml-auto" stats={album.stats} />
+        <ChevronDownIcon className="shrink-0 size-4.5 transition-transform group-data-[state=open]:rotate-180" />
+        {album.coverPath && (
+          <AppImage
+            src={album.coverPath}
+            className="size-8 rounded border border-gray-700"
+          />
+        )}
+        <div className="text-base truncate">{album.title}</div>
+        <TrackStatsProgress
+          className="shrink-0 w-16 ml-auto md:w-64"
+          stats={album.stats}
+        />
       </div>
       {open && <TrackList className="rounded-t-none" albumId={album.id} />}
     </li>

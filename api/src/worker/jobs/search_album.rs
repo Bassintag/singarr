@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     models::{
         job::JobContext,
-        track::{Track, TracksFilters, TracksQuery},
+        track::{Track, TracksFilters},
     },
     worker::jobs::search_track::{search_track, SearchTrackParams},
 };
@@ -19,13 +19,13 @@ pub async fn search_album(context: JobContext<SearchAlbumParams>) -> Result<()> 
     let tracks = context
         .state
         .track_service
-        .find_many(&TracksQuery {
-            filters: TracksFilters {
+        .find_many(
+            Some(&TracksFilters {
                 album_id: Some(context.params.album_id),
                 artist_id: None,
-            },
-            pageable: Default::default(),
-        })
+            }),
+            None,
+        )
         .await?;
 
     let filtered: Vec<Track> = tracks.into_iter().filter(|t| !t.has_lyrics).collect();

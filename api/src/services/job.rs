@@ -1,13 +1,13 @@
 use std::sync::Arc;
 
 use anyhow::Result;
-use sqlx::{prelude::FromRow, Pool, Sqlite};
+use sqlx::{prelude::FromRow, Pool, QueryBuilder, Sqlite};
 use tokio::sync::mpsc::{self, UnboundedReceiver, UnboundedSender};
 
 use crate::{
     models::{
         event::Event,
-        generic::IdRow,
+        generic::{IdRow, Page, Pageable, TotalRow},
         job::{Job, JobPayload, JobStatus},
     },
     state::AppState,
@@ -16,15 +16,19 @@ use crate::{
 #[derive(FromRow)]
 pub struct JobRow {
     id: i64,
+    created_at: String,
     payload: String,
     status: String,
     error: Option<String>,
 }
 
-impl From<JobRow> for Result<Job> {
-    fn from(value: JobRow) -> Self {
-        Self::Ok(Job {
+impl TryFrom<JobRow> for Job {
+    type Error = anyhow::Error;
+
+    fn try_from(value: JobRow) -> Result<Self, Self::Error> {
+        Ok(Self {
             id: value.id,
+            created_at: value.created_at,
             payload: serde_json::from_str(&value.payload)?,
             status: value.status.parse()?,
             error: value.error,
@@ -34,6 +38,7 @@ impl From<JobRow> for Result<Job> {
 
 const SELECT: &str = r#"SELECT
     j."id",
+    j."created_at",
     j."payload",
     j."status",
     j."error"
@@ -79,6 +84,35 @@ impl JobService {
         }
     }
 
+    pub async fn count(&self) -> Result<i64> {
+        let row = sqlx::query_as!(TotalRow, r#"SELECT COUNT(*) as "total" FROM artist"#)
+            .fetch_one(&self.pool)
+            .await?;
+        Ok(row.total)
+    }
+
+    pub async fn find_many(&self, pageable_opt: Option<&Pageable>) -> Result<Vec<Job>> {
+        let mut qb = QueryBuilder::new(format!(
+            r#"{SELECT}
+            ORDER BY j."created_at" DESC "#
+        ));
+        if let Some(pageable) = pageable_opt {
+            let (limit, offset) = pageable.to_limit_offset();
+            qb.push(" LIMIT ").push_bind(limit);
+            qb.push(" OFFSET ").push_bind(offset);
+        }
+        let rows: Vec<JobRow> = qb.build_query_as().fetch_all(&self.pool).await?;
+        Ok(rows
+            .into_iter()
+            .map(Job::try_from)
+            .collect::<Result<_, _>>()?)
+    }
+
+    pub async fn find_page(&self, pageable: &Pageable) -> Result<Page<Job>> {
+        let (total, items) = tokio::try_join!(self.count(), self.find_many(Some(pageable)))?;
+        Ok(Page { total, items })
+    }
+
     pub async fn find(&self, id: i64) -> Result<Job> {
         let query = format!(
             r#"{SELECT}
@@ -88,7 +122,7 @@ impl JobService {
             .bind(id)
             .fetch_one(&self.pool)
             .await?;
-        row.into()
+        row.try_into()
     }
 
     pub async fn create_job(&self, payload: &JobPayload) -> Result<i64> {

@@ -13,7 +13,9 @@ import { Route as appRouteRouteImport } from './routes/(app)/route'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as appIndexRouteImport } from './routes/(app)/index'
 import { Route as appTracksIndexRouteImport } from './routes/(app)/tracks/index'
+import { Route as appTasksIndexRouteImport } from './routes/(app)/tasks/index'
 import { Route as appSettingsIndexRouteImport } from './routes/(app)/settings/index'
+import { Route as appJobsIndexRouteImport } from './routes/(app)/jobs/index'
 import { Route as appArtistsIndexRouteImport } from './routes/(app)/artists/index'
 import { Route as appAlbumsIndexRouteImport } from './routes/(app)/albums/index'
 import { Route as appArtistsIdRouteImport } from './routes/(app)/artists/$id'
@@ -37,9 +39,19 @@ const appTracksIndexRoute = appTracksIndexRouteImport.update({
   path: '/tracks/',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appTasksIndexRoute = appTasksIndexRouteImport.update({
+  id: '/tasks/',
+  path: '/tasks/',
+  getParentRoute: () => appRouteRoute,
+} as any)
 const appSettingsIndexRoute = appSettingsIndexRouteImport.update({
   id: '/settings/',
   path: '/settings/',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appJobsIndexRoute = appJobsIndexRouteImport.update({
+  id: '/jobs/',
+  path: '/jobs/',
   getParentRoute: () => appRouteRoute,
 } as any)
 const appArtistsIndexRoute = appArtistsIndexRouteImport.update({
@@ -64,7 +76,9 @@ export interface FileRoutesByFullPath {
   '/artists/$id': typeof appArtistsIdRoute
   '/albums': typeof appAlbumsIndexRoute
   '/artists': typeof appArtistsIndexRoute
+  '/jobs': typeof appJobsIndexRoute
   '/settings': typeof appSettingsIndexRoute
+  '/tasks': typeof appTasksIndexRoute
   '/tracks': typeof appTracksIndexRoute
 }
 export interface FileRoutesByTo {
@@ -73,7 +87,9 @@ export interface FileRoutesByTo {
   '/artists/$id': typeof appArtistsIdRoute
   '/albums': typeof appAlbumsIndexRoute
   '/artists': typeof appArtistsIndexRoute
+  '/jobs': typeof appJobsIndexRoute
   '/settings': typeof appSettingsIndexRoute
+  '/tasks': typeof appTasksIndexRoute
   '/tracks': typeof appTracksIndexRoute
 }
 export interface FileRoutesById {
@@ -84,7 +100,9 @@ export interface FileRoutesById {
   '/(app)/artists/$id': typeof appArtistsIdRoute
   '/(app)/albums/': typeof appAlbumsIndexRoute
   '/(app)/artists/': typeof appArtistsIndexRoute
+  '/(app)/jobs/': typeof appJobsIndexRoute
   '/(app)/settings/': typeof appSettingsIndexRoute
+  '/(app)/tasks/': typeof appTasksIndexRoute
   '/(app)/tracks/': typeof appTracksIndexRoute
 }
 export interface FileRouteTypes {
@@ -95,7 +113,9 @@ export interface FileRouteTypes {
     | '/artists/$id'
     | '/albums'
     | '/artists'
+    | '/jobs'
     | '/settings'
+    | '/tasks'
     | '/tracks'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -104,7 +124,9 @@ export interface FileRouteTypes {
     | '/artists/$id'
     | '/albums'
     | '/artists'
+    | '/jobs'
     | '/settings'
+    | '/tasks'
     | '/tracks'
   id:
     | '__root__'
@@ -114,7 +136,9 @@ export interface FileRouteTypes {
     | '/(app)/artists/$id'
     | '/(app)/albums/'
     | '/(app)/artists/'
+    | '/(app)/jobs/'
     | '/(app)/settings/'
+    | '/(app)/tasks/'
     | '/(app)/tracks/'
   fileRoutesById: FileRoutesById
 }
@@ -153,11 +177,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appTracksIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/tasks/': {
+      id: '/(app)/tasks/'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof appTasksIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/settings/': {
       id: '/(app)/settings/'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof appSettingsIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/jobs/': {
+      id: '/(app)/jobs/'
+      path: '/jobs'
+      fullPath: '/jobs'
+      preLoaderRoute: typeof appJobsIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/artists/': {
@@ -189,7 +227,9 @@ interface appRouteRouteChildren {
   appArtistsIdRoute: typeof appArtistsIdRoute
   appAlbumsIndexRoute: typeof appAlbumsIndexRoute
   appArtistsIndexRoute: typeof appArtistsIndexRoute
+  appJobsIndexRoute: typeof appJobsIndexRoute
   appSettingsIndexRoute: typeof appSettingsIndexRoute
+  appTasksIndexRoute: typeof appTasksIndexRoute
   appTracksIndexRoute: typeof appTracksIndexRoute
 }
 
@@ -198,7 +238,9 @@ const appRouteRouteChildren: appRouteRouteChildren = {
   appArtistsIdRoute: appArtistsIdRoute,
   appAlbumsIndexRoute: appAlbumsIndexRoute,
   appArtistsIndexRoute: appArtistsIndexRoute,
+  appJobsIndexRoute: appJobsIndexRoute,
   appSettingsIndexRoute: appSettingsIndexRoute,
+  appTasksIndexRoute: appTasksIndexRoute,
   appTracksIndexRoute: appTracksIndexRoute,
 }
 

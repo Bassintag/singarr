@@ -21,7 +21,7 @@ function RouteComponent() {
     await createToken.mutateAsync(values, {
       onSuccess: (pair) => {
         useTokenState.getState().set(pair);
-        router.navigate({ to: "/albums" });
+        router.navigate({ to: "/" });
       },
     });
   };

@@ -9,7 +9,9 @@ use tower_http::cors::CorsLayer;
 use crate::{
     args::AppArgs,
     http::{
-        controllers::{album, artist, job, lyrics, search, settings, socket, status, token, track},
+        controllers::{
+            album, artist, job, lyrics, search, settings, socket, status, tasks, token, track,
+        },
         middlewares::auth::auth_middleware,
     },
     state::AppState,
@@ -51,6 +53,7 @@ fn private_routes(state: Arc<AppState>) -> Router<Arc<AppState>> {
         .nest("/settings", settings::routes())
         .nest("/search", search::routes())
         .nest("/socket", socket::routes())
+        .nest("/tasks", tasks::routes())
         .nest("/tracks", track::routes())
         .layer(middleware::from_fn_with_state(state, auth_middleware))
 }

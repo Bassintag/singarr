@@ -4,7 +4,7 @@ import type { ComponentProps } from "react";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const buttonVariants = cva(
-  "flex flex-row justify-center items-center gap-2 font-medium transition-colors rounded disabled:opacity-50",
+  "shrink-0 flex flex-row justify-center items-center gap-2 font-medium transition-colors rounded disabled:opacity-50",
   {
     variants: {
       variant: {

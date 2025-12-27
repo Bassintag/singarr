@@ -17,7 +17,7 @@ export const useSocketState = create<SocketState>((set, get) => {
     const tokens = useTokenState.getState().tokens;
     if (tokens == null) return null;
     const socketUrl = resolveApiUrl("socket");
-    socketUrl.protocol = socketUrl.protocol === "https" ? "wss" : "ws";
+    socketUrl.protocol = socketUrl.protocol.startsWith("https") ? "wss" : "ws";
     if (tokens) {
       socketUrl.searchParams.set("accessToken", tokens.access);
     }

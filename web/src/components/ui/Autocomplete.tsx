@@ -14,7 +14,7 @@ export function AutocompleteContent({
       <Primitive.Positioner sideOffset={8} className="z-50">
         <Primitive.Popup
           className={cn(
-            "bg-gray-900 border border-gray-700 rounded py-1 w-(--anchor-width)",
+            "bg-gray-900 border border-gray-700 rounded w-(--anchor-width)",
             className
           )}
           {...rest}
@@ -38,11 +38,35 @@ export function AutocompleteList({
   ...rest
 }: ComponentProps<typeof Primitive.List>) {
   return (
-    <Primitive.List
-      className={cn("flex flex-col divide-gray-700", className)}
+    <Primitive.List className={cn("flex flex-col", className)} {...rest} />
+  );
+}
+
+export function AutocompleteGroup({
+  className,
+  ...rest
+}: ComponentProps<typeof Primitive.Group>) {
+  return (
+    <Primitive.Group className={cn("flex flex-col", className)} {...rest} />
+  );
+}
+
+export function AutocompleteGroupLabel({
+  className,
+  ...rest
+}: ComponentProps<typeof Primitive.GroupLabel>) {
+  return (
+    <Primitive.GroupLabel
+      className={cn("px-2 py-1 text-xs bg-gray-800 capitalize", className)}
       {...rest}
     />
   );
+}
+
+export function AutocompleteCollection(
+  props: ComponentProps<typeof Primitive.Collection>
+) {
+  return <Primitive.Collection {...props} />;
 }
 
 export function AutocompleteItem({
@@ -53,6 +77,21 @@ export function AutocompleteItem({
     <Primitive.Item
       className={cn(
         "px-2 py-1 transition cursor-pointer hover:bg-gray-800",
+        className
+      )}
+      {...rest}
+    />
+  );
+}
+
+export function AutocompleteEmpty({
+  className,
+  ...rest
+}: ComponentProps<typeof Primitive.Empty>) {
+  return (
+    <Primitive.Empty
+      className={cn(
+        "text-xs bg-gray-800 text-center italic p-2 empty:hidden",
         className
       )}
       {...rest}

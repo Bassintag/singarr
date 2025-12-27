@@ -1,5 +1,5 @@
 use anyhow::Result;
-use sqlx::{prelude::FromRow, Pool, Sqlite};
+use sqlx::{prelude::FromRow, Pool, QueryBuilder, Sqlite};
 
 use crate::models::{
     artist::{Artist, ArtistWithStats},
@@ -11,6 +11,8 @@ use crate::models::{
 struct ArtistRow {
     pub id: i64,
     pub name: String,
+    pub description: Option<String>,
+    pub image_path: Option<String>,
     pub lidarr_id: Option<i64>,
     pub musicbrainz_id: Option<String>,
 
@@ -24,6 +26,8 @@ impl From<ArtistRow> for ArtistWithStats {
             artist: Artist {
                 id: value.id,
                 name: value.name,
+                description: value.description,
+                image_path: value.image_path,
                 lidarr_id: value.lidarr_id,
                 musicbrainz_id: value.musicbrainz_id,
             },
@@ -38,6 +42,8 @@ impl From<ArtistRow> for ArtistWithStats {
 const SELECT: &str = r#"SELECT
     ar."id",
     ar."name",
+    ar."description",
+    ar."image_path",
     ar."lidarr_id",
     ar."musicbrainz_id",
 
@@ -64,25 +70,23 @@ impl ArtistSerivce {
         Ok(row.total)
     }
 
-    pub async fn find_many(&self, pageable: &Pageable) -> Result<Vec<ArtistWithStats>> {
-        let (limit, offset) = pageable.to_limit_offset();
-        let query = format!(
+    pub async fn find_many(&self, pageable_opt: Option<&Pageable>) -> Result<Vec<ArtistWithStats>> {
+        let mut qb = QueryBuilder::new(format!(
             r#"{SELECT}
             GROUP BY ar."id" 
-            ORDER BY ar."name" ASC 
-            LIMIT $1 
-            OFFSET $2"#
-        );
-        let rows: Vec<ArtistRow> = sqlx::query_as(&query)
-            .bind(limit)
-            .bind(offset)
-            .fetch_all(&self.pool)
-            .await?;
+            ORDER BY ar."name" ASC "#
+        ));
+        if let Some(pageable) = pageable_opt {
+            let (limit, offset) = pageable.to_limit_offset();
+            qb.push(" LIMIT ").push_bind(limit);
+            qb.push(" OFFSET ").push_bind(offset);
+        }
+        let rows: Vec<ArtistRow> = qb.build_query_as().fetch_all(&self.pool).await?;
         Ok(rows.into_iter().map(ArtistWithStats::from).collect())
     }
 
     pub async fn find_page(&self, pageable: &Pageable) -> Result<Page<ArtistWithStats>> {
-        let (total, items) = tokio::try_join!(self.count(), self.find_many(pageable))?;
+        let (total, items) = tokio::try_join!(self.count(), self.find_many(Some(pageable)))?;
         Ok(Page { total, items })
     }
 
@@ -96,6 +100,26 @@ impl ArtistSerivce {
             .fetch_one(&self.pool)
             .await?;
         Ok(row.into())
+    }
+
+    pub async fn set_metadata(
+        &self,
+        id: i64,
+        image_path: &Option<String>,
+        description: &Option<String>,
+    ) -> Result<()> {
+        sqlx::query_as!(
+            IdRow,
+            r#"UPDATE artist 
+            SET "image_path" = $1, "description" = $2
+            WHERE id = $3"#,
+            image_path,
+            description,
+            id,
+        )
+        .execute(&self.pool)
+        .await?;
+        Ok(())
     }
 
     pub async fn upsert_lidarr(&self, data: &LidarrArtist) -> Result<i64> {

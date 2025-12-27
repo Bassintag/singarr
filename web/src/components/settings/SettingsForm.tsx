@@ -26,6 +26,14 @@ import {
   NumberFieldInput,
 } from "../ui/NumberField";
 import { Switch } from "../ui/Switch";
+import {
+  Slider,
+  SliderControl,
+  SliderIndicator,
+  SliderThumb,
+  SliderTrack,
+  SliderValue,
+} from "../ui/Slider";
 
 const settingsFormSchema = settingsSchema;
 
@@ -52,6 +60,7 @@ export function SettingsForm({
       }}
     >
       <SettingsFormGeneralGroup />
+      <SettingsFormLyricsGroup />
       <SettingsFormAuthGroup />
       <SettingsFormLidarrGroup />
     </Form>
@@ -71,6 +80,54 @@ function SettingsFormGeneralGroup() {
           <FormField>
             <FormLabel>Root dir</FormLabel>
             <Input {...field} />
+            <FormError />
+          </FormField>
+        )}
+      />
+    </FormGroup>
+  );
+}
+
+function SettingsFormLyricsGroup() {
+  const form = useFormContext<SettingsFormValues>();
+
+  return (
+    <FormGroup>
+      <FormGroupTitle>Lyrics</FormGroupTitle>
+      <FormController
+        control={form.control}
+        name="lyrics.minScore"
+        render={({ field }) => (
+          <FormField>
+            <Slider
+              {...field}
+              min={0}
+              max={1}
+              step={0.01}
+              format={{ style: "percent" }}
+            >
+              <div className="flex flex-row justify-between gap-4">
+                <FormLabel>Min Score</FormLabel>
+                <SliderValue />
+              </div>
+              <SliderControl>
+                <SliderTrack>
+                  <SliderIndicator />
+                  <SliderThumb />
+                </SliderTrack>
+              </SliderControl>
+            </Slider>
+            <FormError />
+          </FormField>
+        )}
+      />
+      <FormController
+        control={form.control}
+        name="lyrics.upgrade"
+        render={({ field }) => (
+          <FormField>
+            <FormLabel>Upgrade unsynced</FormLabel>
+            <Switch {...field} />
             <FormError />
           </FormField>
         )}

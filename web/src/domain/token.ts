@@ -10,6 +10,11 @@ export interface TokenPair {
   refresh: string;
 }
 
+export interface TokenPayload {
+  iat: number;
+  exp: number;
+}
+
 export const createTokensSchema = z.object({
   username: z.string().min(1),
   password: z.string().min(1),

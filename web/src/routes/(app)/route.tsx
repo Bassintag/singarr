@@ -3,12 +3,20 @@ import {
   NavbarApp,
   NavbarTitle,
   NavbarActions,
+  NavbarSidebarToggle,
 } from "@/components/layout/Navbar";
 import { Sidebar, SidebarLink } from "@/components/layout/Sidebar";
 import { LibrarySearchbar } from "@/components/library/LibrarySearchbar";
 import { Button } from "@/components/ui/Button";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { SettingsIcon, UserIcon, Disc3Icon, MusicIcon } from "lucide-react";
+import {
+  SettingsIcon,
+  UserIcon,
+  Disc3Icon,
+  MusicIcon,
+  ClockIcon,
+  CalendarIcon,
+} from "lucide-react";
 
 export const Route = createFileRoute("/(app)")({
   component: RouteComponent,
@@ -18,6 +26,7 @@ function RouteComponent() {
   return (
     <>
       <Navbar>
+        <NavbarSidebarToggle />
         <NavbarApp>
           <NavbarTitle>Singarr</NavbarTitle>
         </NavbarApp>
@@ -41,14 +50,22 @@ function RouteComponent() {
           <MusicIcon />
           Tracks
         </SidebarLink>
+        <SidebarLink to="/jobs">
+          <ClockIcon />
+          History
+        </SidebarLink>
+        <SidebarLink to="/tasks">
+          <CalendarIcon />
+          Tasks
+        </SidebarLink>
         <SidebarLink to="/settings">
           <SettingsIcon />
           Settings
         </SidebarLink>
       </Sidebar>
-      <div className="ml-50 mt-16">
+      <main className="mt-16 min-h-[calc(100dvh-64px)] flex flex-col grow md:ml-50">
         <Outlet />
-      </div>
+      </main>
     </>
   );
 }

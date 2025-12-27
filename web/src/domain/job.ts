@@ -5,7 +5,11 @@ export interface ImportLyricsJob {
   provider?: string;
 }
 
-// Search
+// Scan
+export interface ScanLibraryJob {
+  type: "scanLibrary";
+}
+
 export interface ScanArtistJob {
   type: "scanArtist";
   artistId: number;
@@ -22,6 +26,10 @@ export interface ScanTrackJob {
 }
 
 // Search
+export interface SearchLibraryJob {
+  type: "searchLibrary";
+}
+
 export interface SearchArtistJob {
   type: "searchArtist";
   artistId: number;
@@ -49,9 +57,11 @@ export interface SyncArtistJob {
 
 export type JobPayload =
   | ImportLyricsJob
+  | ScanLibraryJob
   | ScanArtistJob
   | ScanAlbumJob
   | ScanTrackJob
+  | SearchLibraryJob
   | SearchArtistJob
   | SearchAlbumJob
   | SearchTrackJob
@@ -62,6 +72,7 @@ export type JobStatus = "pending" | "running" | "done" | "failed";
 
 export interface Job {
   id: number;
+  createdAt: string;
   payload: JobPayload;
   status: JobStatus;
   error?: string;

@@ -23,6 +23,8 @@ pub struct SearchTrackParams {
 }
 
 pub async fn search_track(context: JobContext<SearchTrackParams>) -> Result<()> {
+    let settings = context.state.settings_service.get().await;
+
     let track = context
         .state
         .track_service
@@ -44,16 +46,27 @@ pub async fn search_track(context: JobContext<SearchTrackParams>) -> Result<()> 
         );
     }
 
-    let best = results
-        .into_iter()
-        .map(|result| ScoredResult {
-            score: score_result(&track, &result),
-            result,
-        })
-        .max_by(|a, b| a.score.partial_cmp(&b.score).unwrap());
+    let scored = results.into_iter().map(|result| ScoredResult {
+        score: score_result(&track, &result),
+        result,
+    });
 
-    if let Some(best_scored) = best {
-        let best_result = best_scored.result;
+    let mut best_opt: Option<ScoredResult> = None;
+    for item in scored {
+        if item.score < settings.lyrics.min_score {
+            continue;
+        }
+        if let Some(best) = &best_opt {
+            if (!best.result.synced && item.result.synced) || best.score < item.score {
+                best_opt = Some(item);
+            }
+        } else {
+            best_opt = Some(item)
+        }
+    }
+
+    if let Some(best) = best_opt {
+        let best_result = best.result;
         let content = provider.download(&best_result).await?;
         import_lyrics(context.clone_with_params(ImportLyricsParams {
             provider: Some(provider.name()),

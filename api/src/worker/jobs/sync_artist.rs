@@ -1,9 +1,15 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
-use crate::models::{
-    job::JobContext,
-    lidarr::{LidarrAlbumQuery, LidarrTrackFileQuery, LidarrTrackQuery},
+use crate::{
+    models::{
+        job::JobContext,
+        lidarr::{LidarrAlbumQuery, LidarrTrackFileQuery, LidarrTrackQuery},
+    },
+    worker::jobs::{
+        sync_album_metadata::{sync_album_metadata, SyncAlbumMetadataParams},
+        sync_artist_metadata::{sync_artist_metadata, SyncArtistMetadataParams},
+    },
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -13,13 +19,23 @@ pub struct SyncArtistParams {
 }
 
 pub async fn sync_artist(context: JobContext<SyncArtistParams>) -> Result<()> {
-    let artist = context
+    let with_stats = context
         .state
         .artist_service
         .find(context.params.artist_id)
         .await?;
 
-    let Some(artist_lidarr_id) = artist.artist.lidarr_id else {
+    let artist = with_stats.artist;
+
+    if artist.image_path.is_none() || artist.description.is_none() {
+        sync_artist_metadata(context.clone_with_params(SyncArtistMetadataParams {
+            artist_id: artist.id,
+            force: false,
+        }))
+        .await?;
+    }
+
+    let Some(artist_lidarr_id) = artist.lidarr_id else {
         return Ok(());
     };
 
@@ -58,11 +74,18 @@ pub async fn sync_artist(context: JobContext<SyncArtistParams>) -> Result<()> {
 
     for lidarr_album in lidarr_albums.iter() {
         println!("Found album: {}", lidarr_album.title);
-        context
+        let album_id = context
             .state
             .album_service
             .upsert_lidarr(&lidarr_album)
             .await?;
+        let with_stats = context.state.album_service.find(album_id).await?;
+        if with_stats.album.cover_path.is_none() {
+            sync_album_metadata(context.clone_with_params(SyncAlbumMetadataParams {
+                album_id: with_stats.album.id,
+            }))
+            .await?
+        }
     }
 
     let track_query = LidarrTrackQuery {

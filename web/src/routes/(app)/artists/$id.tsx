@@ -16,12 +16,17 @@ export const Route = createFileRoute("/(app)/artists/$id")({
 
 function RouteComponent() {
   return (
-    <div>
+    <>
       <ArtistBanner />
-      <AlbumsList />
-      <div className="m-4 border border-gray-700 rounded overflow-hidden">
-        <LyricsTable />
+      <div className="flex flex-col gap-8 p-4 md:px-6 md:py-8">
+        <AlbumsList />
+        <div className="flex flex-col gap-4">
+          <div className="text-xl">Lyrics files</div>
+          <div className="border border-gray-700 rounded">
+            <LyricsTable />
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

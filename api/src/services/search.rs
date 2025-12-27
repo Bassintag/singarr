@@ -6,6 +6,7 @@ use crate::models::search::{Search, SearchAlbum, SearchArtist, SearchResultKind,
 #[derive(FromRow)]
 pub struct SearchRow {
     pub kind: String,
+    pub image_path: Option<String>,
     pub artist_id: i64,
     pub artist_name: String,
     pub album_id: Option<i64>,
@@ -21,6 +22,7 @@ impl TryFrom<SearchRow> for Search {
         Ok(Self {
             kind: SearchResultKind::try_from(value.kind.as_str())?,
             id: value.track_id.or(value.album_id).unwrap_or(value.artist_id),
+            image_path: value.image_path,
             artist: Some(SearchArtist {
                 id: value.artist_id,
                 name: value.artist_name,
@@ -52,6 +54,7 @@ impl SearchService {
             SearchRow,
             r#"SELECT
                 'artist' AS kind,
+                artist.image_path AS image_path,
                 artist.id AS artist_id,
                 artist.name AS artist_name,
                 NULL AS album_id,
@@ -65,12 +68,13 @@ impl SearchService {
 
             SELECT
                 'album' AS kind,
-                artist.id,
-                artist.name,
-                album.id,
-                album.title,
-                NULL,
-                NULL
+                album.cover_path AS image_path,
+                artist.id AS artist_id,
+                artist.name AS artist_name,
+                album.id AS album_id,
+                album.title AS album_title,
+                NULL AS track_id,
+                NULL AS track_title
             FROM album
             JOIN artist ON artist.id = album.artist_id
             WHERE album.title LIKE '%' || $1 || '%' COLLATE NOCASE
@@ -79,12 +83,13 @@ impl SearchService {
 
             SELECT
                 'track' AS kind,
-                artist.id,
-                artist.name,
-                album.id,
-                album.title,
-                track.id,
-                track.title
+                album.cover_path AS image_path,
+                artist.id AS artist_id,
+                artist.name AS artist_name,
+                album.id AS album_id,
+                album.title AS album_title,
+                track.id AS track_id,
+                track.title AS track_title
             FROM track
             JOIN album  ON album.id = track.album_id
             JOIN artist ON artist.id = album.artist_id

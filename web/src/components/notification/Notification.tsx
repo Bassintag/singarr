@@ -110,12 +110,12 @@ function ImportLyricsNotification() {
     trackQueryOptions(notification.job.payload.trackId)
   );
   return (
-    <NotificationTitle>
+    <>
       Importing {track?.title}
       {notification.job.payload.provider && (
         <> from {notification.job.payload.provider}</>
       )}
-    </NotificationTitle>
+    </>
   );
 }
 
@@ -126,11 +126,7 @@ function ArtistNotification({ prefix }: { prefix: string }) {
         .payload.artistId
     )
   );
-  return (
-    <NotificationTitle>
-      {prefix} {artist?.name}
-    </NotificationTitle>
-  );
+  return `${prefix} ${artist?.name}`;
 }
 
 function AlbumNotification({ prefix }: { prefix: string }) {
@@ -139,11 +135,7 @@ function AlbumNotification({ prefix }: { prefix: string }) {
       useNotification<"scanAlbum" | "searchAlbum">().job.payload.albumId
     )
   );
-  return (
-    <NotificationTitle>
-      {prefix} {album?.title}
-    </NotificationTitle>
-  );
+  return `${prefix} ${album?.title}`;
 }
 
 function TrackNotification({ prefix }: { prefix: string }) {
@@ -152,26 +144,20 @@ function TrackNotification({ prefix }: { prefix: string }) {
       useNotification<"scanTrack" | "searchTrack">().job.payload.trackId
     )
   );
-  return (
-    <NotificationTitle>
-      {prefix} {track?.title}
-    </NotificationTitle>
-  );
+  return `${prefix} ${track?.title}`;
 }
 
-function SyncLibraryNotification() {
-  return <NotificationTitle>Syncing library</NotificationTitle>;
-}
-
-const elements: Record<JobPayload["type"], React.ReactElement> = {
+const elements: Record<JobPayload["type"], React.ReactNode> = {
   importLyrics: <ImportLyricsNotification />,
+  scanLibrary: "Scanning library",
   scanArtist: <ArtistNotification prefix="Scanning" />,
   scanAlbum: <AlbumNotification prefix="Scanning" />,
   scanTrack: <TrackNotification prefix="Scanning" />,
+  searchLibrary: "Searching library",
   searchArtist: <ArtistNotification prefix="Searching" />,
   searchAlbum: <AlbumNotification prefix="Searching" />,
   searchTrack: <TrackNotification prefix="Searching" />,
-  syncLibrary: <SyncLibraryNotification />,
+  syncLibrary: "Syncing library",
   syncArtist: <ArtistNotification prefix="Syncing" />,
 };
 
@@ -196,7 +182,7 @@ export function AppNotifications() {
       onClick={() => useNotificationState.getState().next()}
     >
       <NotificationContext value={notificaiton}>
-        {element}
+        <NotificationTitle>{element}</NotificationTitle>
         {description != null && (
           <div className="text-gray-500 text-xs">{description}</div>
         )}

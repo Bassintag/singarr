@@ -1,10 +1,12 @@
 pub mod album;
 pub mod artist;
 pub mod event;
+pub mod image;
 pub mod job;
 pub mod jwt;
 pub mod lidarr;
 pub mod lyrics;
+pub mod scheduler;
 pub mod search;
 pub mod settings;
 pub mod track;

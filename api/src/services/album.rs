@@ -4,7 +4,7 @@ use sqlx::{FromRow, Pool, QueryBuilder, Sqlite};
 use crate::models::{
     album::{Album, AlbumWithStats, AlbumsFilters, AlbumsQuery},
     artist::Artist,
-    generic::{IdRow, Page, TotalRow, TrackStats},
+    generic::{IdRow, Page, Pageable, TotalRow, TrackStats},
     lidarr::LidarrAlbum,
 };
 
@@ -12,12 +12,15 @@ use crate::models::{
 pub struct AlbumRow {
     pub id: i64,
     pub title: String,
+    pub description: Option<String>,
     pub cover_path: Option<String>,
     pub lidarr_id: Option<i64>,
     pub musicbrainz_id: Option<String>,
 
     pub artist_id: i64,
     pub artist_name: String,
+    pub artist_description: Option<String>,
+    pub artist_image_path: Option<String>,
     pub artist_lidarr_id: Option<i64>,
     pub artist_musicbrainz_id: Option<String>,
 
@@ -31,6 +34,7 @@ impl From<AlbumRow> for AlbumWithStats {
             album: Album {
                 id: value.id,
                 title: value.title,
+                description: value.description,
                 cover_path: value.cover_path,
                 lidarr_id: value.lidarr_id,
                 musicbrainz_id: value.musicbrainz_id,
@@ -38,6 +42,8 @@ impl From<AlbumRow> for AlbumWithStats {
             artist: Artist {
                 id: value.artist_id,
                 name: value.artist_name,
+                description: value.artist_description,
+                image_path: value.artist_image_path,
                 lidarr_id: value.artist_lidarr_id,
                 musicbrainz_id: value.artist_musicbrainz_id,
             },
@@ -52,12 +58,15 @@ impl From<AlbumRow> for AlbumWithStats {
 const SELECT: &str = r#"SELECT
     al."id",
     al."title",
+    al."description",
     al."cover_path",
     al."lidarr_id",
     al."musicbrainz_id",
 
     ar."id" as "artist_id",
     ar."name" as "artist_name",
+    ar."description" as "artist_description",
+    ar."image_path" as "artist_image_path",
     ar."lidarr_id" as "artist_lidarr_id",
     ar."musicbrainz_id" as "artist_musicbrainz_id",
 
@@ -95,22 +104,33 @@ impl AlbumSerivce {
         Ok(row.total)
     }
 
-    pub async fn find_many(&self, query: &AlbumsQuery) -> Result<Vec<AlbumWithStats>> {
-        let (limit, offset) = query.pageable.to_limit_offset();
+    pub async fn find_many(
+        &self,
+        filters_opt: Option<&AlbumsFilters>,
+        pageable_opt: Option<&Pageable>,
+    ) -> Result<Vec<AlbumWithStats>> {
         let mut qb = sqlx::QueryBuilder::new(SELECT);
-        Self::push_filters(&mut qb, &query.filters);
+        if let Some(filters) = filters_opt {
+            Self::push_filters(&mut qb, filters);
+        }
         qb.push(
             r#" GROUP BY al."id" 
             ORDER BY ar."name" ASC, al."title" ASC"#,
         );
-        qb.push(" LIMIT ").push_bind(limit);
-        qb.push(" OFFSET ").push_bind(offset);
+        if let Some(pageable) = pageable_opt {
+            let (limit, offset) = pageable.to_limit_offset();
+            qb.push(" LIMIT ").push_bind(limit);
+            qb.push(" OFFSET ").push_bind(offset);
+        }
         let rows: Vec<AlbumRow> = qb.build_query_as().fetch_all(&self.pool).await?;
         Ok(rows.into_iter().map(AlbumWithStats::from).collect())
     }
 
     pub async fn find_page(&self, query: &AlbumsQuery) -> Result<Page<AlbumWithStats>> {
-        let (total, items) = tokio::try_join!(self.count(&query.filters), self.find_many(query))?;
+        let (total, items) = tokio::try_join!(
+            self.count(&query.filters),
+            self.find_many(Some(&query.filters), Some(&query.pageable))
+        )?;
         Ok(Page { total, items })
     }
 
@@ -149,5 +169,25 @@ impl AlbumSerivce {
         .fetch_one(&self.pool)
         .await?;
         Ok(row.id)
+    }
+
+    pub async fn set_metadata(
+        &self,
+        id: i64,
+        cover_path: &Option<String>,
+        description: &Option<String>,
+    ) -> Result<()> {
+        sqlx::query_as!(
+            IdRow,
+            r#"UPDATE album 
+            SET "cover_path" = $1, "description" = $2
+            WHERE id = $3"#,
+            cover_path,
+            description,
+            id,
+        )
+        .execute(&self.pool)
+        .await?;
+        Ok(())
     }
 }

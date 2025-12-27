@@ -48,7 +48,7 @@ COPY ./migrations ./migrations
 COPY --from=builder-api /app/target/release/singarr-api /usr/bin/singarr-api
 COPY --from=builder-web /app/web/dist /usr/share/nginx/html
 
-ENV DATABASE_URL=sqlite:/data/db.sqlite
-ENV SETTINGS_PATH=/data/settings.json
+ENV DATABASE_URL=sqlite:/config/db.sqlite
+ENV SETTINGS_PATH=/config/settings.json
 
 CMD ["sh", "start.sh"]

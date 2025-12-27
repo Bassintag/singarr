@@ -2,10 +2,7 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    models::{
-        job::JobContext,
-        track::{TracksFilters, TracksQuery},
-    },
+    models::{job::JobContext, track::TracksFilters},
     worker::jobs::{
         clean_album::{clean_album, CleanAlbumParams},
         scan_track::{scan_track, ScanTrackParams},
@@ -22,13 +19,13 @@ pub async fn scan_album(context: JobContext<ScanAlbumParams>) -> Result<()> {
     let tracks = context
         .state
         .track_service
-        .find_many(&TracksQuery {
-            filters: TracksFilters {
+        .find_many(
+            Some(&TracksFilters {
                 album_id: Some(context.params.album_id),
                 artist_id: None,
-            },
-            pageable: Default::default(),
-        })
+            }),
+            None,
+        )
         .await?;
 
     for (i, track) in tracks.iter().enumerate() {

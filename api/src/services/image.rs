@@ -1,0 +1,43 @@
+use std::path::PathBuf;
+
+use anyhow::Result;
+
+use crate::services::settings::SettingsService;
+
+#[derive(Clone)]
+pub struct ImageService {
+    settings_service: SettingsService,
+}
+
+impl ImageService {
+    pub fn new(settings_service: SettingsService) -> Self {
+        Self { settings_service }
+    }
+
+    fn convert(bytes: &Vec<u8>) -> Result<Vec<u8>> {
+        let image = image::load_from_memory(&bytes)?.thumbnail(512, 512);
+        let webp = webp::Encoder::from_image(&image)
+            .map_err(|e| anyhow::Error::msg(String::from(e)))?
+            .encode(80.0);
+        Ok(webp.to_vec())
+    }
+
+    pub async fn resolve_path(&self, relative_path: &PathBuf) -> PathBuf {
+        let settings = self.settings_service.get().await;
+        PathBuf::from(settings.root_folder)
+            .join("images")
+            .join(relative_path)
+    }
+
+    pub async fn download(&self, url: &String, relative_path: &PathBuf) -> Result<PathBuf> {
+        let response = reqwest::get(url).await?;
+        let bytes = response.bytes().await?;
+        let webp_bytes = Self::convert(&bytes.to_vec())?;
+        let output_path = self.resolve_path(relative_path).await;
+        if let Some(parent_path) = output_path.parent() {
+            tokio::fs::create_dir_all(parent_path).await?;
+        }
+        tokio::fs::write(&output_path, &webp_bytes).await?;
+        Ok(output_path)
+    }
+}

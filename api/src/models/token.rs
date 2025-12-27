@@ -7,9 +7,17 @@ pub struct TokenPair {
     pub refresh: String,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct CreateToken {
-    pub username: String,
-    pub password: String,
+pub struct TokenClaims {
+    pub typ: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase", untagged)]
+pub enum CreateToken {
+    #[serde(rename_all = "camelCase")]
+    Login { username: String, password: String },
+    #[serde(rename_all = "camelCase")]
+    Refresh { refresh_token: String },
 }

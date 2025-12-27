@@ -6,5 +6,6 @@ pub mod search;
 pub mod settings;
 pub mod socket;
 pub mod status;
+pub mod tasks;
 pub mod token;
 pub mod track;

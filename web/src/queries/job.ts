@@ -1,9 +1,28 @@
 import type { AppEvent } from "@/domain/event";
+import type { Page, Pageable } from "@/domain/generic";
 import type { Job, JobPayload } from "@/domain/job";
 import { useSocketState } from "@/hooks/socket/useSocketState";
 import { fetchApi } from "@/utils/api";
 import { invalidateAll } from "@/utils/query";
-import { mutationOptions } from "@tanstack/react-query";
+import { mutationOptions, queryOptions } from "@tanstack/react-query";
+
+export function jobsQueryOptions(query?: Pageable) {
+  return queryOptions({
+    queryKey: ["jobs", "list", query],
+    queryFn: () => {
+      return fetchApi<Page<Job>>("jobs", { query });
+    },
+  });
+}
+
+export function jobQueryOptions(id: number) {
+  return queryOptions({
+    queryKey: ["jobs", "details", id],
+    queryFn: () => {
+      return fetchApi<Job>(`jobs/${id}`);
+    },
+  });
+}
 
 export function createJobMutationOptions() {
   return mutationOptions({

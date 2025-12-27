@@ -11,7 +11,7 @@ import {
   setSettingsMutationOptions,
   settingsQueryOptions,
 } from "@/queries/settings";
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { SaveIcon } from "lucide-react";
 import { useId } from "react";
@@ -21,8 +21,6 @@ export const Route = createFileRoute("/(app)/settings/")({
 });
 
 function RouteComponent() {
-  const { data: settings } = useSuspenseQuery(settingsQueryOptions());
-  const setSettings = useMutation(setSettingsMutationOptions());
   const formId = useId();
 
   return (
@@ -40,16 +38,27 @@ function RouteComponent() {
           </BannerHeader>
         </BannerContent>
       </Banner>
-      <div className="p-4">
-        <SettingsForm
-          id={formId}
-          defaultValues={settings}
-          onSubmit={async (values) => {
-            console.log(values);
-            await setSettings.mutateAsync(values);
-          }}
-        />
+      <div className="px-6 py-4">
+        <Form formId={formId} />
       </div>
     </>
+  );
+}
+
+function Form({ formId }: { formId: string }) {
+  const { data: settings } = useQuery(settingsQueryOptions());
+  const setSettings = useMutation(setSettingsMutationOptions());
+
+  return (
+    settings && (
+      <SettingsForm
+        id={formId}
+        defaultValues={settings}
+        onSubmit={async (values) => {
+          console.log(values);
+          await setSettings.mutateAsync(values);
+        }}
+      />
+    )
   );
 }

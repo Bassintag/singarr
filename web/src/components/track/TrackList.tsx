@@ -33,18 +33,18 @@ export function TrackListItem({ track }: { track: Track }) {
       data-highlight={trackId === track.id || undefined}
       className="flex flex-row items-center gap-4 px-4 py-2 text-sm transition-colors bg-gray-900 odd:bg-gray-950 hover:bg-gray-800 data-highlight:bg-primary-950"
     >
-      <div className="w-4.5 text-center">{track.trackNumber}</div>
-      <div>{track.title}</div>
+      <div className="shrink-0 w-4.5 text-center">{track.trackNumber}</div>
+      <div className="truncate">{track.title}</div>
       <div className="ml-auto [&_svg]:size-4.5">
         {track.hasLyrics ? (
           <Tag>
             <CheckIcon />
-            Available
+            <span className="max-md:hidden">Available</span>
           </Tag>
         ) : (
           <Tag variant="secondary">
             <XIcon />
-            Missing
+            <span className="max-md:hidden">Missing</span>
           </Tag>
         )}
       </div>
