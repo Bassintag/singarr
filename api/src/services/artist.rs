@@ -77,9 +77,7 @@ impl ArtistSerivce {
             ORDER BY ar."name" ASC "#
         ));
         if let Some(pageable) = pageable_opt {
-            let (limit, offset) = pageable.to_limit_offset();
-            qb.push(" LIMIT ").push_bind(limit);
-            qb.push(" OFFSET ").push_bind(offset);
+            pageable.push_limit_offset(&mut qb);
         }
         let rows: Vec<ArtistRow> = qb.build_query_as().fetch_all(&self.pool).await?;
         Ok(rows.into_iter().map(ArtistWithStats::from).collect())

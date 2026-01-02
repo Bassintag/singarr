@@ -40,7 +40,7 @@ export function LyricsDialog({
           <DialogTitle>Lyrics</DialogTitle>
           <DialogDescription>{lyric?.filePath}</DialogDescription>
         </DialogHeader>
-        <DialogBody className="whitespace-pre-wrap font-mono text-sm px-4 pb-4">
+        <DialogBody className="whitespace-pre-wrap font-mono text-sm">
           {content?.text}
         </DialogBody>
         <DialogFooter>

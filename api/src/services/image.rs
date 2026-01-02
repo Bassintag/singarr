@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, sync::Arc};
 
 use anyhow::Result;
 
@@ -6,11 +6,11 @@ use crate::services::settings::SettingsService;
 
 #[derive(Clone)]
 pub struct ImageService {
-    settings_service: SettingsService,
+    settings_service: Arc<SettingsService>,
 }
 
 impl ImageService {
-    pub fn new(settings_service: SettingsService) -> Self {
+    pub fn new(settings_service: Arc<SettingsService>) -> Self {
         Self { settings_service }
     }
 

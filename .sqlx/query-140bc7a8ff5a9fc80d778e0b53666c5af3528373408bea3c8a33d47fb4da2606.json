@@ -1,0 +1,20 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO notifier (\n                \"params\"\n            ) VALUES (\n                $1\n            ) RETURNING \"id\"",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "140bc7a8ff5a9fc80d778e0b53666c5af3528373408bea3c8a33d47fb4da2606"
+}

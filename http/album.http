@@ -1,5 +1,5 @@
 @apiUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NjY0Mjg4MTMsImV4cCI6MTc2NjQyODg3M30.2L8T3cUtFTCTF4oTKQyJKvc0WQXwqkL4koKynOtGEbk
+@token = eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NjczOTQ4NjgsImV4cCI6MTc2NzM5NDkyOCwidHlwIjoiYWNjZXNzIn0.42V73Pgq4siKqMMj3KWWVllQppVGClO7IeG4R8_wJNU
 
 ###
 

@@ -33,3 +33,12 @@ export function SidebarLink({
     />
   );
 }
+
+export function SidebarTag({ className, ...rest }: ComponentProps<"div">) {
+  return (
+    <div
+      className={cn("ml-auto bg-primary-900 px-1 rounded text-xs", className)}
+      {...rest}
+    />
+  );
+}

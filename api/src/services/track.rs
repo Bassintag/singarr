@@ -154,9 +154,7 @@ impl TrackService {
         }
         qb.push(r#" ORDER BY ar."name" ASC, al."title" ASC, t."track_number" ASC"#);
         if let Some(pageable) = pageable_opt {
-            let (limit, offset) = pageable.to_limit_offset();
-            qb.push(" LIMIT ").push_bind(limit);
-            qb.push(" OFFSET ").push_bind(offset);
+            pageable.push_limit_offset(&mut qb);
         }
         let rows: Vec<TrackRow> = qb.build_query_as().fetch_all(&self.pool).await?;
         Ok(rows.into_iter().map(Track::from).collect())

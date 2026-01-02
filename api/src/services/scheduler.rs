@@ -22,9 +22,9 @@ pub struct SchedulerService {
 }
 
 impl SchedulerService {
-    pub async fn new(job_service: JobService) -> Result<Self> {
+    pub async fn new(job_service: Arc<JobService>) -> Result<Self> {
         Ok(Self {
-            job_service: Arc::new(job_service),
+            job_service,
             scheduler: JobScheduler::new().await?,
             tasks: Vec::new(),
         })

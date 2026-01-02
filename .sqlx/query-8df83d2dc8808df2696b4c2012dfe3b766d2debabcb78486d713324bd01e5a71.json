@@ -1,0 +1,62 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT\n                'artist' AS kind,\n                artist.image_path AS image_path,\n                artist.id AS artist_id,\n                artist.name AS artist_name,\n                NULL AS album_id,\n                NULL AS album_title,\n                NULL AS track_id,\n                NULL AS track_title\n            FROM artist\n            WHERE artist.name LIKE '%' || $1 || '%' COLLATE NOCASE\n\n            UNION ALL\n\n            SELECT\n                'album' AS kind,\n                album.cover_path AS image_path,\n                artist.id AS artist_id,\n                artist.name AS artist_name,\n                album.id AS album_id,\n                album.title AS album_title,\n                NULL AS track_id,\n                NULL AS track_title\n            FROM album\n            JOIN artist ON artist.id = album.artist_id\n            WHERE album.title LIKE '%' || $1 || '%' COLLATE NOCASE\n\n            UNION ALL\n\n            SELECT\n                'track' AS kind,\n                album.cover_path AS image_path,\n                artist.id AS artist_id,\n                artist.name AS artist_name,\n                album.id AS album_id,\n                album.title AS album_title,\n                track.id AS track_id,\n                track.title AS track_title\n            FROM track\n            JOIN album  ON album.id = track.album_id\n            JOIN artist ON artist.id = album.artist_id\n            WHERE track.title LIKE '%' || $1 || '%' COLLATE NOCASE\n\n            LIMIT 10",
+  "describe": {
+    "columns": [
+      {
+        "name": "kind",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "image_path",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "artist_id",
+        "ordinal": 2,
+        "type_info": "Integer"
+      },
+      {
+        "name": "artist_name",
+        "ordinal": 3,
+        "type_info": "Text"
+      },
+      {
+        "name": "album_id",
+        "ordinal": 4,
+        "type_info": "Integer"
+      },
+      {
+        "name": "album_title",
+        "ordinal": 5,
+        "type_info": "Text"
+      },
+      {
+        "name": "track_id",
+        "ordinal": 6,
+        "type_info": "Integer"
+      },
+      {
+        "name": "track_title",
+        "ordinal": 7,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      true,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "8df83d2dc8808df2696b4c2012dfe3b766d2debabcb78486d713324bd01e5a71"
+}

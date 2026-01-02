@@ -97,9 +97,7 @@ impl JobService {
             ORDER BY j."created_at" DESC "#
         ));
         if let Some(pageable) = pageable_opt {
-            let (limit, offset) = pageable.to_limit_offset();
-            qb.push(" LIMIT ").push_bind(limit);
-            qb.push(" OFFSET ").push_bind(offset);
+            pageable.push_limit_offset(&mut qb);
         }
         let rows: Vec<JobRow> = qb.build_query_as().fetch_all(&self.pool).await?;
         Ok(rows
@@ -125,7 +123,7 @@ impl JobService {
         row.try_into()
     }
 
-    pub async fn create_job(&self, payload: &JobPayload) -> Result<i64> {
+    pub async fn create(&self, payload: &JobPayload) -> Result<i64> {
         let payload_string = serde_json::to_string(payload)?;
         let status_string = JobStatus::Pending.to_string();
         let row = sqlx::query_as!(
@@ -193,7 +191,7 @@ impl JobService {
     }
 
     pub async fn enqueue(&self, payload: JobPayload) -> Result<Job> {
-        let id = self.create_job(&payload).await?;
+        let id = self.create(&payload).await?;
         let job = self.find(id).await?;
         self.sender.send(job.clone())?;
         Ok(job)

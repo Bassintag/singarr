@@ -3,6 +3,8 @@ export interface ImportLyricsJob {
   type: "importLyrics";
   trackId: number;
   provider?: string;
+  synced: boolean;
+  content: string;
 }
 
 // Scan

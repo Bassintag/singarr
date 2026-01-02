@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use anyhow::Result;
 use reqwest::{Client, Method, Url};
 use serde::{de::DeserializeOwned, Serialize};
@@ -12,12 +14,12 @@ use crate::{
 
 #[derive(Clone)]
 pub struct LidarrService {
-    settings_service: SettingsService,
+    settings_service: Arc<SettingsService>,
     client: Client,
 }
 
 impl LidarrService {
-    pub fn new(settings_service: SettingsService) -> Self {
+    pub fn new(settings_service: Arc<SettingsService>) -> Self {
         Self {
             settings_service,
             client: Client::new(),

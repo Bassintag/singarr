@@ -85,5 +85,8 @@ export async function fetchApi<T>(
   if (!response.ok) {
     throw new ApiError(response);
   }
+  if (response.headers.get("content-length") === "0") {
+    return null as T;
+  }
   return (await response.json()) as T;
 }

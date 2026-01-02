@@ -15,6 +15,7 @@ import { Route as appIndexRouteImport } from './routes/(app)/index'
 import { Route as appTracksIndexRouteImport } from './routes/(app)/tracks/index'
 import { Route as appTasksIndexRouteImport } from './routes/(app)/tasks/index'
 import { Route as appSettingsIndexRouteImport } from './routes/(app)/settings/index'
+import { Route as appNotifiersIndexRouteImport } from './routes/(app)/notifiers/index'
 import { Route as appJobsIndexRouteImport } from './routes/(app)/jobs/index'
 import { Route as appArtistsIndexRouteImport } from './routes/(app)/artists/index'
 import { Route as appAlbumsIndexRouteImport } from './routes/(app)/albums/index'
@@ -49,6 +50,11 @@ const appSettingsIndexRoute = appSettingsIndexRouteImport.update({
   path: '/settings/',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appNotifiersIndexRoute = appNotifiersIndexRouteImport.update({
+  id: '/notifiers/',
+  path: '/notifiers/',
+  getParentRoute: () => appRouteRoute,
+} as any)
 const appJobsIndexRoute = appJobsIndexRouteImport.update({
   id: '/jobs/',
   path: '/jobs/',
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/albums': typeof appAlbumsIndexRoute
   '/artists': typeof appArtistsIndexRoute
   '/jobs': typeof appJobsIndexRoute
+  '/notifiers': typeof appNotifiersIndexRoute
   '/settings': typeof appSettingsIndexRoute
   '/tasks': typeof appTasksIndexRoute
   '/tracks': typeof appTracksIndexRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/albums': typeof appAlbumsIndexRoute
   '/artists': typeof appArtistsIndexRoute
   '/jobs': typeof appJobsIndexRoute
+  '/notifiers': typeof appNotifiersIndexRoute
   '/settings': typeof appSettingsIndexRoute
   '/tasks': typeof appTasksIndexRoute
   '/tracks': typeof appTracksIndexRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/(app)/albums/': typeof appAlbumsIndexRoute
   '/(app)/artists/': typeof appArtistsIndexRoute
   '/(app)/jobs/': typeof appJobsIndexRoute
+  '/(app)/notifiers/': typeof appNotifiersIndexRoute
   '/(app)/settings/': typeof appSettingsIndexRoute
   '/(app)/tasks/': typeof appTasksIndexRoute
   '/(app)/tracks/': typeof appTracksIndexRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/albums'
     | '/artists'
     | '/jobs'
+    | '/notifiers'
     | '/settings'
     | '/tasks'
     | '/tracks'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
     | '/albums'
     | '/artists'
     | '/jobs'
+    | '/notifiers'
     | '/settings'
     | '/tasks'
     | '/tracks'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '/(app)/albums/'
     | '/(app)/artists/'
     | '/(app)/jobs/'
+    | '/(app)/notifiers/'
     | '/(app)/settings/'
     | '/(app)/tasks/'
     | '/(app)/tracks/'
@@ -191,6 +203,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appSettingsIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/notifiers/': {
+      id: '/(app)/notifiers/'
+      path: '/notifiers'
+      fullPath: '/notifiers'
+      preLoaderRoute: typeof appNotifiersIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/jobs/': {
       id: '/(app)/jobs/'
       path: '/jobs'
@@ -228,6 +247,7 @@ interface appRouteRouteChildren {
   appAlbumsIndexRoute: typeof appAlbumsIndexRoute
   appArtistsIndexRoute: typeof appArtistsIndexRoute
   appJobsIndexRoute: typeof appJobsIndexRoute
+  appNotifiersIndexRoute: typeof appNotifiersIndexRoute
   appSettingsIndexRoute: typeof appSettingsIndexRoute
   appTasksIndexRoute: typeof appTasksIndexRoute
   appTracksIndexRoute: typeof appTracksIndexRoute
@@ -239,6 +259,7 @@ const appRouteRouteChildren: appRouteRouteChildren = {
   appAlbumsIndexRoute: appAlbumsIndexRoute,
   appArtistsIndexRoute: appArtistsIndexRoute,
   appJobsIndexRoute: appJobsIndexRoute,
+  appNotifiersIndexRoute: appNotifiersIndexRoute,
   appSettingsIndexRoute: appSettingsIndexRoute,
   appTasksIndexRoute: appTasksIndexRoute,
   appTracksIndexRoute: appTracksIndexRoute,

@@ -1,7 +1,7 @@
 [x] scheduler
 [x] history
-[ ] connect tab (discord, etc...)
-[ ] upload button on lyrics page
-[ ] stats on left menu
-[ ] settings menu on navbar
+[x] connect tab (discord, etc...)
+[x] upload button on lyrics page
+[x] stats on left menu
+[x] settings menu on navbar
 [ ] logo

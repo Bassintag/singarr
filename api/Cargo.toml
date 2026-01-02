@@ -12,7 +12,7 @@ tower = "0.4"
 tower-http = { version = "0.5", features = ["cors", "trace"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter"] }
-sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite"] }
+sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite", "time"] }
 dotenv = "0.15.0"
 anyhow = "1.0.100"
 thiserror = "2.0.17"
@@ -20,6 +20,7 @@ clap = { version = "4.5.53", features = ["derive", "env"] }
 reqwest = { version = "0.12.24", default-features = false, features = [
     "json",
     "rustls-tls",
+    "multipart",
 ] }
 serde_qs = "0.15.0"
 md5 = "0.8.0"

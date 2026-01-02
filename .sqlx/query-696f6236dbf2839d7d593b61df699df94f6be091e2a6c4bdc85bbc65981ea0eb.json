@@ -1,0 +1,32 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT\n                (SELECT COUNT(*) FROM artist) AS artist,\n                (SELECT COUNT(*) FROM album)  AS album,\n                (SELECT COUNT(*) FROM track)  AS track\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "artist",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "album",
+        "ordinal": 1,
+        "type_info": "Integer"
+      },
+      {
+        "name": "track",
+        "ordinal": 2,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "696f6236dbf2839d7d593b61df699df94f6be091e2a6c4bdc85bbc65981ea0eb"
+}

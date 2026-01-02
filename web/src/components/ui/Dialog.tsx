@@ -58,7 +58,7 @@ export function DialogHeader({ className, ...rest }: ComponentProps<"div">) {
 }
 
 export function DialogBody({ className, ...rest }: ComponentProps<"div">) {
-  return <div className={cn("px-4 bg-gray-950", className)} {...rest} />;
+  return <div className={cn("p-4 bg-gray-950", className)} {...rest} />;
 }
 
 export function DialogFooter({ className, ...rest }: ComponentProps<"div">) {

@@ -1,6 +1,6 @@
 use crate::utils::de::de_opt_i64;
 use serde::{Deserialize, Serialize};
-use sqlx::prelude::FromRow;
+use sqlx::{prelude::FromRow, QueryBuilder, Sqlite};
 
 #[derive(FromRow)]
 pub struct IdRow {
@@ -30,10 +30,19 @@ impl Default for Pageable {
 }
 
 impl Pageable {
-    pub fn to_limit_offset(&self) -> (i64, i64) {
+    fn to_limit_offset(&self) -> (Option<i64>, Option<i64>) {
         let page = self.page.unwrap_or(0);
-        let size = self.size.unwrap_or(24);
-        (size, page * size)
+        (self.size, self.size.map(|s| s * page))
+    }
+
+    pub fn push_limit_offset(&self, qb: &mut QueryBuilder<'_, Sqlite>) {
+        let (limit_opt, offset_opt) = self.to_limit_offset();
+        if let Some(limit) = limit_opt {
+            qb.push(" LIMIT ").push_bind(limit);
+        }
+        if let Some(offset) = offset_opt {
+            qb.push(" OFFSET ").push_bind(offset);
+        }
     }
 }
 

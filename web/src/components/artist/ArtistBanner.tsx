@@ -26,6 +26,7 @@ import { Tag } from "../ui/Tag";
 import { AutomaticSearchArtistButton } from "./AutomaticSearchArtistButton";
 import { ScanArtistButton } from "./ScanArtistButton";
 import { SyncArtistButton } from "./SyncArtistButton";
+import { ImportLyricsDialog } from "../lyrics/ImportLyricsDialog";
 
 export function ArtistBanner() {
   const { id } = Route.useParams();
@@ -46,10 +47,12 @@ export function ArtistBanner() {
           <SearchIcon />
           Search
         </AutomaticSearchArtistButton>
-        <BannerAction className="md:ml-auto">
-          <CloudUploadIcon />
-          Upload
-        </BannerAction>
+        <ImportLyricsDialog>
+          <BannerAction className="md:ml-auto">
+            <CloudUploadIcon />
+            Upload
+          </BannerAction>
+        </ImportLyricsDialog>
       </BannerActions>
       <BannerBackground src={resolveImageUrl(artist?.imagePath)}>
         <BannerContent>

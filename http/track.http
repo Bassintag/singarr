@@ -1,13 +1,16 @@
 @apiUrl = http://localhost:3000
+@token = eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NjczOTQ5MzcsImV4cCI6MTc2NzM5NDk5NywidHlwIjoiYWNjZXNzIn0.ikOiJ0gQX--2OLEcWqfsyaP7hYDpRtHK9AFbVcNekXM
 
 ###
 
 # @name list
 
 GET {{apiUrl}}/tracks
+Authorization: Bearer {{token}}
 
 ###
 
 # @name retrieve
 
 GET {{apiUrl}}/tracks/1
+Authorization: Bearer {{token}}

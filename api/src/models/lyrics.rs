@@ -1,14 +1,18 @@
-use crate::{models::generic::Pageable, utils::de::de_opt_i64};
+use crate::{
+    models::{generic::Pageable, track::Track},
+    utils::de::de_opt_i64,
+};
 use serde::{Deserialize, Serialize};
-use sqlx::FromRow;
 
-#[derive(Debug, Clone, Serialize, FromRow)]
+#[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Lyrics {
     pub id: i64,
     pub synced: bool,
     pub file_path: String,
     pub checksum: String,
+    pub provider: Option<String>,
+    pub track: Track,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -41,7 +45,7 @@ pub struct LyricsFilters {
 #[serde(rename_all = "camelCase")]
 pub struct LyricsQuery {
     #[serde(flatten)]
-    pub pageable: Pageable,
+    pub pageable: Option<Pageable>,
     #[serde(flatten)]
     pub filters: LyricsFilters,
 }
