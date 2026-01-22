@@ -35,13 +35,13 @@ pub async fn sync_album_metadata(context: JobContext<SyncAlbumMetadataParams>) -
 
     let output_path = PathBuf::from("albums").join(format!("{}.webp", musicbrainz_id));
 
-    if context
+    if let Err(e) = context
         .state
         .image_service
         .download(&thumb_url, &output_path)
         .await
-        .is_err()
     {
+        eprintln!("Error while downloading image at {}: {:}", thumb_url, e);
         context.log("Failed to download image");
         return Ok(());
     }

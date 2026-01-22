@@ -3,6 +3,7 @@ pub mod artist;
 pub mod job;
 pub mod lyrics;
 pub mod notifier;
+pub mod provider;
 pub mod search;
 pub mod settings;
 pub mod socket;

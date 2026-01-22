@@ -45,7 +45,7 @@ pub struct LyricsFilters {
 #[serde(rename_all = "camelCase")]
 pub struct LyricsQuery {
     #[serde(flatten)]
-    pub pageable: Option<Pageable>,
+    pub pageable: Pageable,
     #[serde(flatten)]
     pub filters: LyricsFilters,
 }

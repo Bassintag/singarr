@@ -7,6 +7,7 @@ pub mod jwt;
 pub mod lidarr;
 pub mod lyrics;
 pub mod notifier;
+pub mod provider;
 pub mod scheduler;
 pub mod search;
 pub mod settings;

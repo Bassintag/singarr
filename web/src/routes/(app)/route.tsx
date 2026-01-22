@@ -14,7 +14,7 @@ import { countsStatsQueryOptions } from "@/queries/stats";
 import { statusQueryOptions } from "@/queries/status";
 import { router } from "@/router";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import {
   SettingsIcon,
   UserIcon,
@@ -24,6 +24,7 @@ import {
   CalendarIcon,
   BellIcon,
   LogOutIcon,
+  TriangleAlertIcon,
 } from "lucide-react";
 import { Suspense } from "react";
 
@@ -39,7 +40,9 @@ function RouteComponent() {
       <Navbar>
         <NavbarSidebarToggle />
         <NavbarApp>
-          <NavbarTitle>Singarr</NavbarTitle>
+          <Link to="/">
+            <NavbarTitle>Singarr</NavbarTitle>
+          </Link>
         </NavbarApp>
         <NavbarActions>
           <LibrarySearchbar />
@@ -63,6 +66,11 @@ function RouteComponent() {
           <MusicIcon />
           Tracks
           {stats && <SidebarTag>{stats.track}</SidebarTag>}
+        </SidebarLink>
+        <SidebarLink to="/wanted">
+          <TriangleAlertIcon />
+          Wanted
+          {stats && <SidebarTag>{stats.wanted}</SidebarTag>}
         </SidebarLink>
         <SidebarLink to="/jobs">
           <ClockIcon />

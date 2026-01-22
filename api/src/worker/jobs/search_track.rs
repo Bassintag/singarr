@@ -2,19 +2,9 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    models::job::JobContext,
-    worker::{
-        jobs::import_lyrics::{import_lyrics, ImportLyricsParams},
-        provider::{Provider, SearchResult},
-        providers::lrclib::LrcLibProvider,
-        score::score_result,
-    },
+    models::{job::JobContext, provider::ProviderResult},
+    worker::jobs::import_lyrics::{import_lyrics, ImportLyricsParams},
 };
-
-struct ScoredResult {
-    pub score: f64,
-    pub result: SearchResult,
-}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -31,48 +21,44 @@ pub async fn search_track(context: JobContext<SearchTrackParams>) -> Result<()> 
         .find(context.params.track_id)
         .await?;
 
-    let provider = LrcLibProvider::new();
-
-    let results = provider.search_lyrics(&track).await?;
+    let results = context.state.provider_service.get_results(&track).await?;
 
     for result in &results {
         println!(
             "Found result with score {:.2}: {:} - {:} - {:} (synced: {:})",
-            score_result(&track, &result),
-            result.artist_name,
-            result.album_title,
-            result.track_name,
-            result.synced,
+            result.score,
+            result.file.artist_name,
+            result.file.album_title,
+            result.file.track_name,
+            result.file.synced,
         );
     }
 
-    let scored = results.into_iter().map(|result| ScoredResult {
-        score: score_result(&track, &result),
-        result,
-    });
-
-    let mut best_opt: Option<ScoredResult> = None;
-    for item in scored {
-        if item.score < settings.lyrics.min_score {
+    let mut best_opt: Option<ProviderResult> = None;
+    for result in results {
+        if result.score < settings.lyrics.min_score {
             continue;
         }
         if let Some(best) = &best_opt {
-            if (!best.result.synced && item.result.synced) || best.score < item.score {
-                best_opt = Some(item);
+            if (!best.file.synced && result.file.synced) || best.score < result.score {
+                best_opt = Some(result);
             }
         } else {
-            best_opt = Some(item)
+            best_opt = Some(result)
         }
     }
 
     if let Some(best) = best_opt {
-        let best_result = best.result;
-        let content = provider.download(&best_result).await?;
+        let content = if let Some(content) = best.file.content {
+            content
+        } else {
+            context.state.provider_service.download(&best).await?
+        };
         import_lyrics(context.clone_with_params(ImportLyricsParams {
-            provider: Some(provider.name()),
+            provider: Some(best.provider.name),
             track_id: context.params.track_id,
             content,
-            synced: best_result.synced,
+            synced: best.file.synced,
         }))
         .await?;
     }

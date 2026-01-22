@@ -15,6 +15,7 @@ export interface Track {
 export const trackSearchSchema = pageableSchema.extend({
   artistId: z.int().min(1).optional(),
   albumId: z.int().min(1).optional(),
+  hasLyrics: z.boolean().optional(),
 });
 
 export type TrackSearch = z.infer<typeof trackSearchSchema>;

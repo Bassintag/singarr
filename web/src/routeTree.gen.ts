@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as appRouteRouteImport } from './routes/(app)/route'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as appIndexRouteImport } from './routes/(app)/index'
+import { Route as appWantedIndexRouteImport } from './routes/(app)/wanted/index'
 import { Route as appTracksIndexRouteImport } from './routes/(app)/tracks/index'
 import { Route as appTasksIndexRouteImport } from './routes/(app)/tasks/index'
 import { Route as appSettingsIndexRouteImport } from './routes/(app)/settings/index'
@@ -33,6 +34,11 @@ const LoginIndexRoute = LoginIndexRouteImport.update({
 const appIndexRoute = appIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appWantedIndexRoute = appWantedIndexRouteImport.update({
+  id: '/wanted/',
+  path: '/wanted/',
   getParentRoute: () => appRouteRoute,
 } as any)
 const appTracksIndexRoute = appTracksIndexRouteImport.update({
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof appSettingsIndexRoute
   '/tasks': typeof appTasksIndexRoute
   '/tracks': typeof appTracksIndexRoute
+  '/wanted': typeof appWantedIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof appIndexRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/settings': typeof appSettingsIndexRoute
   '/tasks': typeof appTasksIndexRoute
   '/tracks': typeof appTracksIndexRoute
+  '/wanted': typeof appWantedIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/(app)/settings/': typeof appSettingsIndexRoute
   '/(app)/tasks/': typeof appTasksIndexRoute
   '/(app)/tracks/': typeof appTracksIndexRoute
+  '/(app)/wanted/': typeof appWantedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/tasks'
     | '/tracks'
+    | '/wanted'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/tasks'
     | '/tracks'
+    | '/wanted'
   id:
     | '__root__'
     | '/(app)'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/(app)/settings/'
     | '/(app)/tasks/'
     | '/(app)/tracks/'
+    | '/(app)/wanted/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -180,6 +192,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof appIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/wanted/': {
+      id: '/(app)/wanted/'
+      path: '/wanted'
+      fullPath: '/wanted'
+      preLoaderRoute: typeof appWantedIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/tracks/': {
@@ -251,6 +270,7 @@ interface appRouteRouteChildren {
   appSettingsIndexRoute: typeof appSettingsIndexRoute
   appTasksIndexRoute: typeof appTasksIndexRoute
   appTracksIndexRoute: typeof appTracksIndexRoute
+  appWantedIndexRoute: typeof appWantedIndexRoute
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
@@ -263,6 +283,7 @@ const appRouteRouteChildren: appRouteRouteChildren = {
   appSettingsIndexRoute: appSettingsIndexRoute,
   appTasksIndexRoute: appTasksIndexRoute,
   appTracksIndexRoute: appTracksIndexRoute,
+  appWantedIndexRoute: appWantedIndexRoute,
 }
 
 const appRouteRouteWithChildren = appRouteRoute._addFileChildren(

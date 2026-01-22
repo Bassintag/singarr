@@ -130,6 +130,13 @@ impl TrackService {
         if let Some(album_id) = filters.album_id {
             qb.push(r#" AND t."album_id" = "#).push_bind(album_id);
         }
+        if let Some(has_lyrics) = filters.has_lyrics {
+            if has_lyrics {
+                qb.push(r#" AND EXISTS (SELECT 1 FROM lyrics l WHERE l."track_id" = t."id")"#);
+            } else {
+                qb.push(r#" AND NOT EXISTS (SELECT 1 FROM lyrics l WHERE l."track_id" = t."id")"#);
+            }
+        }
     }
 
     pub async fn count(&self, filters: &TracksFilters) -> Result<i64> {
@@ -220,5 +227,16 @@ impl TrackService {
         .fetch_one(&self.pool)
         .await?;
         self.find(row.id).await
+    }
+
+    pub async fn remove(&self, id: i64) -> Result<()> {
+        sqlx::query!(
+            r#"DELETE FROM track
+            WHERE "id" = $1"#,
+            id
+        )
+        .execute(&self.pool)
+        .await?;
+        Ok(())
     }
 }

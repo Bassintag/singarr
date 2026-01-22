@@ -8,6 +8,8 @@ import type { ComponentProps } from "react";
 import { Tag } from "../ui/Tag";
 import { Button } from "../ui/Button";
 import { AutomaticSearchTrackButton } from "./AutomaticSearchTrackButton";
+import { ManualSearchDialog } from "./ManualSearchDialog";
+import { DialogTrigger } from "../ui/Dialog";
 
 export function TrackList({
   albumId,
@@ -56,14 +58,20 @@ export function TrackListItem({ track }: { track: Track }) {
         >
           <SearchIcon />
         </AutomaticSearchTrackButton>
-        <Button
-          size="icon-sm"
-          variant="ghost"
-          type="button"
-          title="Interactive Search"
-        >
-          <UserIcon />
-        </Button>
+        <ManualSearchDialog trackId={track.id}>
+          <DialogTrigger
+            render={
+              <Button
+                size="icon-sm"
+                variant="ghost"
+                type="button"
+                title="Interactive Search"
+              >
+                <UserIcon />
+              </Button>
+            }
+          />
+        </ManualSearchDialog>
       </div>
     </li>
   );

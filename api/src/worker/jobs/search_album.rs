@@ -1,4 +1,5 @@
 use anyhow::Result;
+use futures::{stream::FuturesUnordered, TryStreamExt};
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -23,6 +24,7 @@ pub async fn search_album(context: JobContext<SearchAlbumParams>) -> Result<()> 
             Some(&TracksFilters {
                 album_id: Some(context.params.album_id),
                 artist_id: None,
+                has_lyrics: None,
             }),
             None,
         )
@@ -30,14 +32,21 @@ pub async fn search_album(context: JobContext<SearchAlbumParams>) -> Result<()> 
 
     let filtered: Vec<Track> = tracks.into_iter().filter(|t| !t.has_lyrics).collect();
 
-    for (i, track) in filtered.iter().enumerate() {
-        context.log(format!(
-            "[{}/{}] Searching track: {}",
-            i + 1,
-            filtered.len(),
-            track.title
+    let mut futures = FuturesUnordered::new();
+
+    for track in filtered.iter() {
+        futures.push(search_track(
+            context.clone_with_params(SearchTrackParams { track_id: track.id }),
         ));
-        search_track(context.clone_with_params(SearchTrackParams { track_id: track.id })).await?;
+    }
+
+    let mut i: usize = 0;
+    loop {
+        context.log(format!("[{}/{}] Searching tracks", i, filtered.len()));
+        if futures.try_next().await?.is_none() {
+            break;
+        }
+        i += 1;
     }
 
     Ok(())

@@ -60,7 +60,6 @@ pub async fn scan_track(context: JobContext<ScanTrackParams>) -> Result<()> {
             .await?;
 
         if lyrics_opt.is_none() {
-            println!("CREATE LYRICS: {:?}", file_path);
             context
                 .state
                 .lyrics_service

@@ -10,3 +10,18 @@ where
         None => Ok(None),
     }
 }
+
+pub fn de_opt_bool<'de, D>(deserializer: D) -> Result<Option<bool>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let opt = Option::<String>::deserialize(deserializer)?;
+    Ok(match opt {
+        Some(s) => match s.as_str() {
+            "true" => Some(true),
+            "false" => Some(false),
+            _ => None,
+        },
+        None => None,
+    })
+}

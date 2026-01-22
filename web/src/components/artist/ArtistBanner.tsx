@@ -37,7 +37,7 @@ export function ArtistBanner() {
       <BannerActions>
         <SyncArtistButton size="sm" variant="ghost" artistId={id}>
           <RefreshCwIcon />
-          Sync
+          Sync albums
         </SyncArtistButton>
         <ScanArtistButton size="sm" variant="ghost" artistId={id}>
           <HardDriveIcon />
@@ -45,7 +45,7 @@ export function ArtistBanner() {
         </ScanArtistButton>
         <AutomaticSearchArtistButton size="sm" variant="ghost" artistId={id}>
           <SearchIcon />
-          Search
+          Search missing
         </AutomaticSearchArtistButton>
         <ImportLyricsDialog>
           <BannerAction className="md:ml-auto">

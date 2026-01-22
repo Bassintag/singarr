@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/incompatible-library */
-import type { Track } from "@/domain/track";
+import type { Track, TrackSearch } from "@/domain/track";
 import { tracksQueryOptions } from "@/queries/track";
 import { toPageable } from "@/utils/query";
 import { useQuery } from "@tanstack/react-query";
@@ -49,12 +49,17 @@ const columns: ColumnDef<Track>[] = [
   },
 ];
 
-export function TrackTable() {
+export function TrackTable({ search }: { search?: TrackSearch }) {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 24,
   });
-  const { data: page } = useQuery(tracksQueryOptions(toPageable(pagination)));
+  const { data: page } = useQuery(
+    tracksQueryOptions({
+      ...search,
+      ...toPageable(pagination),
+    })
+  );
   const table = useReactTable({
     columns,
     data: page?.items ?? [],

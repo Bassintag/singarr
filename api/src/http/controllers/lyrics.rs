@@ -41,7 +41,7 @@ pub async fn delete(
     State(state): State<Arc<AppState>>,
     Path(id): Path<i64>,
 ) -> Result<(), ApiError> {
-    Ok(state.lyrics_service.delete(id).await?)
+    Ok(state.lyrics_service.remove(id).await?)
 }
 
 pub async fn get_content(

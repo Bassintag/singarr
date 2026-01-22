@@ -12,6 +12,7 @@ import { NotifierForm } from "./NotifierForm";
 import { Button } from "../ui/Button";
 import { useMutation } from "@tanstack/react-query";
 import { createNotifierMutationOptions } from "@/queries/notifier";
+import { toastPromise } from "@/hooks/notification/useNotificationState";
 
 export function CreateNotifierDialog({ children }: { children: ReactElement }) {
   const createNotifier = useMutation(createNotifierMutationOptions());
@@ -29,11 +30,14 @@ export function CreateNotifierDialog({ children }: { children: ReactElement }) {
           <NotifierForm
             id={formId}
             onSubmit={async (values) => {
-              await createNotifier.mutateAsync(values, {
-                onSuccess: () => {
-                  setOpen(false);
-                },
-              });
+              await toastPromise(
+                createNotifier.mutateAsync(values, {
+                  onSuccess: () => {
+                    setOpen(false);
+                  },
+                }),
+                { title: "Saving", success: "Saved" }
+              );
             }}
           />
         </DialogBody>

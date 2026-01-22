@@ -40,4 +40,10 @@ impl ImageService {
         tokio::fs::write(&output_path, &webp_bytes).await?;
         Ok(output_path)
     }
+
+    pub async fn remove(&self, relative_path: &PathBuf) -> Result<()> {
+        let output_path = self.resolve_path(relative_path).await;
+        tokio::fs::remove_file(&output_path).await?;
+        Ok(())
+    }
 }

@@ -2,7 +2,7 @@ use anyhow::Result;
 
 use crate::{
     models::job::JobContext,
-    worker::jobs::scan_artist::{scan_artist, ScanArtistParams},
+    worker::jobs::search_artist::{search_artist, SearchArtistParams},
 };
 
 pub async fn search_library(context: JobContext<()>) -> Result<()> {
@@ -10,12 +10,12 @@ pub async fn search_library(context: JobContext<()>) -> Result<()> {
 
     for (i, item) in albums.iter().enumerate() {
         context.log(format!(
-            "[{}/{}] Scanning album: {}",
+            "[{}/{}] Searching album: {}",
             i + 1,
             albums.len(),
             item.artist.name
         ));
-        scan_artist(context.clone_with_params(ScanArtistParams {
+        search_artist(context.clone_with_params(SearchArtistParams {
             artist_id: item.artist.id,
         }))
         .await?;

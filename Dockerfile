@@ -30,6 +30,7 @@ COPY ./web/ ./web/
 COPY ./package.json ./pnpm-lock.yaml ./pnpm-workspace.yaml .
 
 ENV PUBLIC_API_PATH=/api/
+ENV PUBLIC_IMAGES_PATH=/images/
 
 RUN pnpm i --frozen-lockfile && \
     pnpm run --filter=web build

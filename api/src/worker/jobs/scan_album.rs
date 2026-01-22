@@ -23,6 +23,7 @@ pub async fn scan_album(context: JobContext<ScanAlbumParams>) -> Result<()> {
             Some(&TracksFilters {
                 album_id: Some(context.params.album_id),
                 artist_id: None,
+                has_lyrics: None,
             }),
             None,
         )

@@ -2,6 +2,10 @@ pub mod clean_album;
 
 pub mod import_lyrics;
 
+pub mod remove_album;
+pub mod remove_artist;
+pub mod remove_track;
+
 pub mod scan_album;
 pub mod scan_artist;
 pub mod scan_library;

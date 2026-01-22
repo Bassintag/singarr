@@ -7,6 +7,7 @@ import {
   BannerHeader,
   BannerTitle,
 } from "@/components/ui/Banner";
+import { toastPromise } from "@/hooks/notification/useNotificationState";
 import {
   setSettingsMutationOptions,
   settingsQueryOptions,
@@ -55,8 +56,10 @@ function Form({ formId }: { formId: string }) {
         id={formId}
         defaultValues={settings}
         onSubmit={async (values) => {
-          console.log(values);
-          await setSettings.mutateAsync(values);
+          await toastPromise(setSettings.mutateAsync(values), {
+            title: "Saving",
+            success: "Saved",
+          });
         }}
       />
     )

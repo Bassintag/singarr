@@ -8,7 +8,7 @@ use crate::{
         album::{Album, AlbumWithArtist},
         artist::Artist,
         event::Event,
-        generic::{IdRow, Page, TotalRow},
+        generic::{IdRow, Page, Pageable, TotalRow},
         lyrics::{CreateLyrics, Lyrics, LyricsContent, LyricsFilters, LyricsQuery},
         track::Track,
     },
@@ -224,16 +224,22 @@ impl LyricsService {
     pub async fn find_all(&self, filters: &LyricsFilters) -> Result<Vec<Lyrics>> {
         let mut qb = QueryBuilder::new(SELECT);
         Self::push_filters(&mut qb, filters);
-        qb.push(r#" ORDER BY "created_at" ASC"#);
+        qb.push(r#" ORDER BY l."file_path" ASC"#);
         let rows: Vec<LyricsRow> = qb.build_query_as().fetch_all(&self.pool).await?;
         Ok(rows.into_iter().map(Lyrics::from).collect())
     }
 
-    pub async fn find_many(&self, query: &LyricsQuery) -> Result<Vec<Lyrics>> {
+    pub async fn find_many(
+        &self,
+        filters: Option<&LyricsFilters>,
+        pageable: Option<&Pageable>,
+    ) -> Result<Vec<Lyrics>> {
         let mut qb = QueryBuilder::new(SELECT);
-        Self::push_filters(&mut qb, &query.filters);
+        if let Some(filters) = filters {
+            Self::push_filters(&mut qb, filters);
+        }
         qb.push(r#" ORDER BY l."file_path" ASC"#);
-        if let Some(pageable) = &query.pageable {
+        if let Some(pageable) = pageable {
             pageable.push_limit_offset(&mut qb);
         }
         let rows: Vec<LyricsRow> = qb.build_query_as().fetch_all(&self.pool).await?;
@@ -241,7 +247,10 @@ impl LyricsService {
     }
 
     pub async fn find_page(&self, query: &LyricsQuery) -> Result<Page<Lyrics>> {
-        let (total, items) = tokio::try_join!(self.count(&query.filters), self.find_many(query))?;
+        let (total, items) = tokio::try_join!(
+            self.count(&query.filters),
+            self.find_many(Some(&query.filters), Some(&query.pageable))
+        )?;
         Ok(Page { total, items })
     }
 
@@ -296,7 +305,7 @@ impl LyricsService {
         Ok(row.id)
     }
 
-    pub async fn delete(&self, id: i64) -> Result<()> {
+    pub async fn remove(&self, id: i64) -> Result<()> {
         let path = self.resolve_path(id).await?;
         let lyrics = self.find(id).await?;
         sqlx::query!(
@@ -306,7 +315,13 @@ impl LyricsService {
         )
         .execute(&self.pool)
         .await?;
-        tokio::fs::remove_file(&path).await?;
+        if let Err(e) = tokio::fs::remove_file(&path).await {
+            eprintln!(
+                "Failed to remove lyrics file {}: {}",
+                path.to_string_lossy(),
+                e
+            )
+        }
         self.event_service.send(Event::LyricsDeleted { lyrics })?;
         Ok(())
     }

@@ -1,14 +1,9 @@
-import type { Job, JobPayload } from "@/domain/job";
 import {
   useCurrentNotification,
   useNotificationState,
-  type Notification,
+  type Notification as NotificationType,
 } from "@/hooks/notification/useNotificationState";
-import { albumQueryOptions } from "@/queries/album";
-import { artistQueryOptions } from "@/queries/artist";
-import { trackQueryOptions } from "@/queries/track";
 import { cn } from "@/utils/cn";
-import { useQuery } from "@tanstack/react-query";
 import { CheckIcon, LoaderIcon, XIcon } from "lucide-react";
 import {
   createContext,
@@ -17,24 +12,36 @@ import {
   useRef,
   type ComponentProps,
 } from "react";
+import { AnimatePresence, motion } from "motion/react";
 
-type NotificationContextValue = Notification;
+type NotificationContextValue = NotificationType;
 
 const NotificationContext = createContext<NotificationContextValue>(
   null as never
 );
 
-function useNotification<T extends JobPayload["type"]>() {
-  return use(NotificationContext) as Notification & {
-    job: Job & { payload: { type: T } };
-  };
-}
+function Notification({
+  className,
+  ...rest
+}: ComponentProps<typeof motion.div>) {
+  const { status } = use(NotificationContext);
 
-function Notification({ className, ...rest }: ComponentProps<"div">) {
   return (
-    <div
+    <motion.div
+      data-status={status}
+      initial={{ translateX: "-100%", opacity: 0 }}
+      animate={{
+        translateX: "0",
+        opacity: 100,
+        transition: { ease: "easeInOut", duration: 0.25 },
+      }}
+      exit={{
+        translateX: "-100%",
+        opacity: 0,
+        transition: { ease: "easeOut", duration: 0.25 },
+      }}
       className={cn(
-        "z-20 fixed bottom-4 left-4 min-w-64 max-w-96 p-4 overflow-hidden flex flex-col gap-2 bg-gray-800 border border-gray-700 rounded transition-colors data-[status=done]:border-success data-[status=failed]:border-failure",
+        "z-20 fixed bottom-4 left-4 min-w-64 max-w-96 p-4 overflow-hidden flex flex-col gap-2 bg-gray-800 border border-gray-700 rounded transition-colors data-[status=success]:border-success data-[status=error]:border-failure",
         className
       )}
       {...rest}
@@ -42,14 +49,8 @@ function Notification({ className, ...rest }: ComponentProps<"div">) {
   );
 }
 
-function NotificationTitle({
-  className,
-  children,
-  ...rest
-}: ComponentProps<"div">) {
-  const {
-    job: { status },
-  } = useNotification();
+function NotificationTitle({ className, ...rest }: ComponentProps<"div">) {
+  const { status, title } = use(NotificationContext);
 
   return (
     <div
@@ -59,21 +60,33 @@ function NotificationTitle({
       )}
       {...rest}
     >
-      {status === "done" ? (
+      {status === "success" ? (
         <CheckIcon className="text-success" />
-      ) : status === "failed" ? (
+      ) : status === "error" ? (
         <XIcon className="text-failure" />
-      ) : (
+      ) : status === "loading" ? (
         <LoaderIcon className="animate-spin" />
-      )}
-      <div className="truncate">{children}</div>
+      ) : null}
+      <div className="truncate">{title}</div>
     </div>
+  );
+}
+
+function Notificationmessage({ className, ...rest }: ComponentProps<"div">) {
+  const { message } = use(NotificationContext);
+
+  return (
+    message && (
+      <div className={cn("text-xs text-gray-400", className)} {...rest}>
+        {message}
+      </div>
+    )
   );
 }
 
 function NotificationProgress({ className, ...rest }: ComponentProps<"div">) {
   const ref = useRef<HTMLDivElement>(null);
-  const removeAt = useNotification().removeAt;
+  const removeAt = useNotificationState((s) => s.removeAt);
 
   useEffect(() => {
     if (removeAt == null) return;
@@ -104,90 +117,19 @@ function NotificationProgress({ className, ...rest }: ComponentProps<"div">) {
   );
 }
 
-function ImportLyricsNotification() {
-  const notification = useNotification<"importLyrics">();
-  const { data: track } = useQuery(
-    trackQueryOptions(notification.job.payload.trackId)
-  );
-  return (
-    <>
-      Importing {track?.title}
-      {notification.job.payload.provider && (
-        <> from {notification.job.payload.provider}</>
-      )}
-    </>
-  );
-}
-
-function ArtistNotification({ prefix }: { prefix: string }) {
-  const { data: artist } = useQuery(
-    artistQueryOptions(
-      useNotification<"scanArtist" | "searchArtist" | "syncArtist">().job
-        .payload.artistId
-    )
-  );
-  return `${prefix} ${artist?.name}`;
-}
-
-function AlbumNotification({ prefix }: { prefix: string }) {
-  const { data: album } = useQuery(
-    albumQueryOptions(
-      useNotification<"scanAlbum" | "searchAlbum">().job.payload.albumId
-    )
-  );
-  return `${prefix} ${album?.title}`;
-}
-
-function TrackNotification({ prefix }: { prefix: string }) {
-  const { data: track } = useQuery(
-    trackQueryOptions(
-      useNotification<"scanTrack" | "searchTrack">().job.payload.trackId
-    )
-  );
-  return `${prefix} ${track?.title}`;
-}
-
-const elements: Record<JobPayload["type"], React.ReactNode> = {
-  importLyrics: <ImportLyricsNotification />,
-  scanLibrary: "Scanning library",
-  scanArtist: <ArtistNotification prefix="Scanning" />,
-  scanAlbum: <AlbumNotification prefix="Scanning" />,
-  scanTrack: <TrackNotification prefix="Scanning" />,
-  searchLibrary: "Searching library",
-  searchArtist: <ArtistNotification prefix="Searching" />,
-  searchAlbum: <AlbumNotification prefix="Searching" />,
-  searchTrack: <TrackNotification prefix="Searching" />,
-  syncLibrary: "Syncing library",
-  syncArtist: <ArtistNotification prefix="Syncing" />,
-};
-
 export function AppNotifications() {
-  const notificaiton = useCurrentNotification();
-  if (notificaiton == null) return null;
-  const element = elements[notificaiton.job.payload.type];
-  if (element == null) return null;
-  let description: string | undefined;
-  switch (notificaiton.job.status) {
-    case "failed":
-      description = notificaiton.job.error;
-      break;
-    case "running":
-      description = notificaiton.log;
-      break;
-  }
+  const notification = useCurrentNotification();
   return (
-    <Notification
-      key={notificaiton.job.id}
-      data-status={notificaiton.job.status}
-      onClick={() => useNotificationState.getState().next()}
-    >
-      <NotificationContext value={notificaiton}>
-        <NotificationTitle>{element}</NotificationTitle>
-        {description != null && (
-          <div className="text-gray-500 text-xs">{description}</div>
-        )}
-        <NotificationProgress />
-      </NotificationContext>
-    </Notification>
+    <AnimatePresence>
+      {notification && (
+        <NotificationContext value={notification}>
+          <Notification key={notification.id}>
+            <NotificationTitle />
+            <Notificationmessage />
+            <NotificationProgress />
+          </Notification>
+        </NotificationContext>
+      )}
+    </AnimatePresence>
   );
 }

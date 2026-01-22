@@ -99,7 +99,7 @@ export function SelectItem({
   return (
     <Primitive.Item
       className={cn(
-        "px-2 flex flex-row items-center gap-2 text-gray-300 transition-colors hover:bg-gray-700 active:bg-gray-900",
+        "px-2 h-6 flex flex-row items-center gap-2 text-gray-300 transition-colors hover:bg-gray-700 active:bg-gray-900",
         className
       )}
       {...rest}
@@ -107,7 +107,7 @@ export function SelectItem({
       <Primitive.ItemIndicator>
         <CheckIcon className="size-3.5" />
       </Primitive.ItemIndicator>
-      <Primitive.ItemText className="only:ml-5.5 text-sm">
+      <Primitive.ItemText className="only:ml-5.5 text-sm cursor-default">
         {children}
       </Primitive.ItemText>
     </Primitive.Item>

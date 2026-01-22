@@ -2,7 +2,7 @@
 
 set -e
 
-DB_PATH="/data/db.sqlite"
+DB_PATH="/config/db.sqlite"
 MIGRATIONS_DIR="/app/migrations"
 
 echo "▶ init sqlite db"

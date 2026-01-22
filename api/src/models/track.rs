@@ -1,4 +1,7 @@
-use crate::{models::generic::Pageable, utils::de::de_opt_i64};
+use crate::{
+    models::generic::Pageable,
+    utils::de::{de_opt_bool, de_opt_i64},
+};
 use serde::{Deserialize, Serialize};
 
 use crate::models::{album::AlbumWithArtist, artist::Artist};
@@ -33,6 +36,8 @@ pub struct TracksFilters {
     pub artist_id: Option<i64>,
     #[serde(default, deserialize_with = "de_opt_i64")]
     pub album_id: Option<i64>,
+    #[serde(default, deserialize_with = "de_opt_bool")]
+    pub has_lyrics: Option<bool>,
 }
 
 #[derive(Debug, Clone, Deserialize)]

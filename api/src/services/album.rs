@@ -188,4 +188,15 @@ impl AlbumSerivce {
         .await?;
         Ok(())
     }
+
+    pub async fn remove(&self, id: i64) -> Result<()> {
+        sqlx::query!(
+            r#"DELETE FROM album
+            WHERE "id" = $1"#,
+            id
+        )
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
 }

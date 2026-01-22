@@ -91,13 +91,27 @@ impl ArtistSerivce {
     pub async fn find(&self, id: i64) -> Result<ArtistWithStats> {
         let query = format!(
             r#"{SELECT}
-            WHERE ar."id" = $1"#
+            WHERE ar."id" = $1
+            GROUP BY ar."id""#
         );
         let row: ArtistRow = sqlx::query_as(&query)
             .bind(id)
             .fetch_one(&self.pool)
             .await?;
         Ok(row.into())
+    }
+
+    pub async fn find_excluding(&self, exclude_ids: &Vec<i64>) -> Result<Vec<IdRow>> {
+        let mut qb = sqlx::QueryBuilder::new(
+            r#"SELECT "id"
+            FROM artist
+            WHERE id NOT IN "#,
+        );
+        qb.push_tuples(exclude_ids, |mut qb, id| {
+            qb.push_bind(id);
+        });
+        println!("{}", qb.sql());
+        Ok(qb.build_query_as().fetch_all(&self.pool).await?)
     }
 
     pub async fn set_metadata(
@@ -140,5 +154,16 @@ impl ArtistSerivce {
         .fetch_one(&self.pool)
         .await?;
         Ok(row.id)
+    }
+
+    pub async fn remove(&self, id: i64) -> Result<()> {
+        sqlx::query!(
+            r#"DELETE FROM artist
+            WHERE "id" = $1"#,
+            id
+        )
+        .execute(&self.pool)
+        .await?;
+        Ok(())
     }
 }

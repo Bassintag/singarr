@@ -8,8 +8,8 @@ use crate::{
     services::{
         album::AlbumSerivce, artist::ArtistSerivce, event::EventService, image::ImageService,
         job::JobService, jwt::JwtService, lidarr::LidarrService, lyrics::LyricsService,
-        notifier::NotifierService, scheduler::SchedulerService, search::SearchService,
-        settings::SettingsService, stats::StatsService, track::TrackService,
+        notifier::NotifierService, provider::ProviderService, scheduler::SchedulerService,
+        search::SearchService, settings::SettingsService, stats::StatsService, track::TrackService,
     },
 };
 
@@ -26,6 +26,7 @@ pub struct AppState {
     pub lidarr_service: Arc<LidarrService>,
     pub lyrics_service: Arc<LyricsService>,
     pub notifier_service: Arc<NotifierService>,
+    pub provider_service: Arc<ProviderService>,
     pub scheduler_service: Arc<SchedulerService>,
     pub search_service: Arc<SearchService>,
     pub settings_service: Arc<SettingsService>,
@@ -46,6 +47,7 @@ impl AppState {
         let mut scheduler_service = SchedulerService::new(job_service.clone()).await?;
         scheduler_service.add_default_tasks().await?;
         let scheduler_service = Arc::new(scheduler_service);
+        let provider_service = Arc::new(ProviderService::new());
 
         let event_service = Arc::new(EventService::new());
         let album_service = Arc::new(AlbumSerivce::new(pool.clone()));
@@ -73,6 +75,7 @@ impl AppState {
             lidarr_service,
             lyrics_service,
             notifier_service,
+            provider_service,
             scheduler_service,
             search_service,
             settings_service,

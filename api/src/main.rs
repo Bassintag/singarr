@@ -10,8 +10,8 @@ use crate::{
     args::AppArgs,
     http::{
         controllers::{
-            album, artist, job, lyrics, notifier, search, settings, socket, stats, status, tasks,
-            token, track,
+            album, artist, job, lyrics, notifier, provider, search, settings, socket, stats,
+            status, tasks, token, track,
         },
         middlewares::auth::auth_middleware,
     },
@@ -52,6 +52,7 @@ fn private_routes(state: Arc<AppState>) -> Router<Arc<AppState>> {
         .nest("/jobs", job::routes())
         .nest("/lyrics", lyrics::routes())
         .nest("/notifiers", notifier::routes())
+        .nest("/providers", provider::routes())
         .nest("/settings", settings::routes())
         .nest("/search", search::routes())
         .nest("/socket", socket::routes())

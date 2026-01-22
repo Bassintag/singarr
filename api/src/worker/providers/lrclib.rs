@@ -1,6 +1,6 @@
 use crate::{
-    models::track::Track,
-    worker::provider::{Provider, SearchResult},
+    models::{provider::ProviderFile, track::Track},
+    worker::provider::LyricsProvider,
 };
 use anyhow::Result;
 use async_trait::async_trait;
@@ -69,12 +69,12 @@ impl LrcLibProvider {
 }
 
 #[async_trait]
-impl Provider for LrcLibProvider {
-    fn name(&self) -> String {
-        "LrcLib".into()
+impl LyricsProvider for LrcLibProvider {
+    fn name(&self) -> &'static str {
+        "LrcLib"
     }
 
-    async fn search_lyrics(&self, track: &Track) -> Result<Vec<SearchResult>> {
+    async fn search_lyrics(&self, track: &Track) -> Result<Vec<ProviderFile>> {
         let results = self
             .search(Some(LrcLibLyricsQuery {
                 track_name: Some(track.title.clone()),
@@ -85,19 +85,21 @@ impl Provider for LrcLibProvider {
             .await?;
         Ok(results
             .into_iter()
-            .map(|r| SearchResult {
+            .map(|r| ProviderFile {
                 identifier: r.id.to_string(),
+                name: r.name,
                 track_name: r.track_name,
                 album_title: r.album_name,
                 artist_name: r.artist_name,
                 synced: r.synced_lyrics.is_some(),
                 duration_ms: Some((r.duration * 1_000.0) as i64),
+                content: Some(r.synced_lyrics.unwrap_or(r.plain_lyrics)),
             })
             .collect())
     }
 
-    async fn download(&self, result: &SearchResult) -> Result<String> {
-        let result = self.retrieve(result.identifier.parse()?).await?;
+    async fn download(&self, file: &ProviderFile) -> Result<String> {
+        let result = self.retrieve(file.identifier.parse()?).await?;
         Ok(result.synced_lyrics.unwrap_or(result.plain_lyrics))
     }
 }

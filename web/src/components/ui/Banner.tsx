@@ -10,7 +10,7 @@ export function BannerActions({ className, ...rest }: ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "p-4 flex flex-row flex-wrap justify-between gap-4 bg-gray-700 md:px-6",
+        "p-4 flex flex-row flex-wrap max-md:justify-between gap-4 bg-gray-700 md:px-6",
         className
       )}
       {...rest}

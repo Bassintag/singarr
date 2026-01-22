@@ -16,6 +16,7 @@ import {
   DialogTrigger,
 } from "../ui/Dialog";
 import { NotifierForm } from "./NotifierForm";
+import { toastPromise } from "@/hooks/notification/useNotificationState";
 
 export function UpdateNotifierDialog({
   notifier,
@@ -43,13 +44,16 @@ export function UpdateNotifierDialog({
             id={formId}
             defaultValues={notifier}
             onSubmit={async (values) => {
-              await updateNotifier.mutateAsync(
-                { ...values, id: notifier.id },
-                {
-                  onSuccess: () => {
-                    setOpen(false);
-                  },
-                }
+              await toastPromise(
+                updateNotifier.mutateAsync(
+                  { ...values, id: notifier.id },
+                  {
+                    onSuccess: () => {
+                      setOpen(false);
+                    },
+                  }
+                ),
+                { title: "Saving", success: "Saved" }
               );
             }}
           />
