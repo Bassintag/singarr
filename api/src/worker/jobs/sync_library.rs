@@ -1,7 +1,7 @@
 use anyhow::Result;
 
 use crate::{
-    models::job::JobContext,
+    models::{job::JobContext, lidarr::LidarrArtist},
     worker::jobs::{
         remove_artist::{remove_artist, RemoveArtistParams},
         sync_artist::{sync_artist, SyncArtistParams},
@@ -9,7 +9,14 @@ use crate::{
 };
 
 pub async fn sync_library(context: JobContext<()>) -> Result<()> {
-    let artists = context.state.lidarr_service.list_artists(None).await?;
+    let artists = context
+        .state
+        .lidarr_service
+        .list_artists(None)
+        .await?
+        .into_iter()
+        .filter(|a| a.statistics.track_file_count > 0)
+        .collect::<Vec<LidarrArtist>>();
 
     let mut ids = Vec::new();
 
@@ -32,9 +39,9 @@ pub async fn sync_library(context: JobContext<()>) -> Result<()> {
     let missing_artists = context.state.artist_service.find_excluding(&ids).await?;
 
     if missing_artists.len() > 0 {
-        context.log("Removing missing artists");
+        // context.log("Removing missing artists");
         for missing in missing_artists {
-            println!("Removing {}", missing.id);
+            println!("Removing artist {}", missing.id);
             remove_artist(context.clone_with_params(RemoveArtistParams {
                 artist_id: missing.id,
             }))

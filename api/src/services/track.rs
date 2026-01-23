@@ -187,11 +187,26 @@ impl TrackService {
         Ok(row.into())
     }
 
+    pub async fn find_excluding(
+        &self,
+        album_id: i64,
+        exclude_ids: &Vec<i64>,
+    ) -> Result<Vec<IdRow>> {
+        let mut qb = sqlx::QueryBuilder::new(r#"SELECT "id" FROM track"#);
+        qb.push(r#" WHERE "album_id" = "#);
+        qb.push_bind(album_id);
+        qb.push(r#" AND "id" NOT IN "#);
+        qb.push_tuples(exclude_ids, |mut qb, id| {
+            qb.push_bind(id);
+        });
+        Ok(qb.build_query_as().fetch_all(&self.pool).await?)
+    }
+
     pub async fn upsert_lidarr(
         &self,
         track: &LidarrTrack,
         track_file: &LidarrTrackFile,
-    ) -> Result<Track> {
+    ) -> Result<i64> {
         let row = sqlx::query_as!(
             IdRow,
             r#"INSERT INTO track (
@@ -226,7 +241,7 @@ impl TrackService {
         )
         .fetch_one(&self.pool)
         .await?;
-        self.find(row.id).await
+        Ok(row.id)
     }
 
     pub async fn remove(&self, id: i64) -> Result<()> {

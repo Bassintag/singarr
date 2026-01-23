@@ -16,6 +16,7 @@ pub mod search_artist;
 pub mod search_library;
 pub mod search_track;
 
+pub mod sync_album;
 pub mod sync_album_metadata;
 pub mod sync_artist;
 pub mod sync_artist_metadata;

@@ -40,11 +40,14 @@ pub async fn remove_artist(context: JobContext<RemoveArtistParams>) -> Result<()
     }
 
     if let Some(image_path) = artist.artist.image_path {
-        context
+        if let Err(e) = context
             .state
             .image_service
             .remove(&PathBuf::from(&image_path))
-            .await?;
+            .await
+        {
+            eprintln!("Failed removing image {}: {}", image_path, e)
+        }
     }
 
     context

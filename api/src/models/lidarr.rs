@@ -39,6 +39,13 @@ pub struct LidarrAlbum {
     pub artist_id: i64,
     pub duration: i64,
     pub release_date: Option<String>,
+    pub statistics: Option<LidarrAlbumStatistics>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LidarrAlbumStatistics {
+    pub track_file_count: i64,
 }
 
 #[derive(Serialize, Default)]

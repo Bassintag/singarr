@@ -105,12 +105,11 @@ impl ArtistSerivce {
         let mut qb = sqlx::QueryBuilder::new(
             r#"SELECT "id"
             FROM artist
-            WHERE id NOT IN "#,
+            WHERE "id" NOT IN "#,
         );
         qb.push_tuples(exclude_ids, |mut qb, id| {
             qb.push_bind(id);
         });
-        println!("{}", qb.sql());
         Ok(qb.build_query_as().fetch_all(&self.pool).await?)
     }
 

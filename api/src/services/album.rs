@@ -144,6 +144,21 @@ impl AlbumSerivce {
         Ok(row.into())
     }
 
+    pub async fn find_excluding(
+        &self,
+        artist_id: i64,
+        exclude_ids: &Vec<i64>,
+    ) -> Result<Vec<IdRow>> {
+        let mut qb = sqlx::QueryBuilder::new(r#"SELECT "id" FROM album"#);
+        qb.push(r#" WHERE "artist_id" = "#);
+        qb.push_bind(artist_id);
+        qb.push(r#" AND "id" NOT IN "#);
+        qb.push_tuples(exclude_ids, |mut qb, id| {
+            qb.push_bind(id);
+        });
+        Ok(qb.build_query_as().fetch_all(&self.pool).await?)
+    }
+
     pub async fn upsert_lidarr(&self, data: &LidarrAlbum) -> Result<i64> {
         let row = sqlx::query_as!(
             IdRow,
