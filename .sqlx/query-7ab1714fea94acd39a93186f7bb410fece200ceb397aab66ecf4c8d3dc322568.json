@@ -1,0 +1,38 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT\n                (SELECT COUNT(*) FROM artist) AS artist,\n                (SELECT COUNT(*) FROM album)  AS album,\n                (SELECT COUNT(*) FROM track)  AS track,\n                (\n                    SELECT COUNT(*)\n                    FROM track t\n                    LEFT JOIN lyrics l ON l.\"track_id\" = t.\"id\"\n                    WHERE l.\"track_id\" IS NULL\n                ) AS wanted\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "artist",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "album",
+        "ordinal": 1,
+        "type_info": "Integer"
+      },
+      {
+        "name": "track",
+        "ordinal": 2,
+        "type_info": "Integer"
+      },
+      {
+        "name": "wanted",
+        "ordinal": 3,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "7ab1714fea94acd39a93186f7bb410fece200ceb397aab66ecf4c8d3dc322568"
+}
