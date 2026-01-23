@@ -1,5 +1,5 @@
 use serde::Serialize;
-use sqlx::FromRow;
+use sqlx::{types::time::OffsetDateTime, FromRow};
 
 use crate::models::generic::TrackStats;
 
@@ -20,4 +20,11 @@ pub struct ArtistWithStats {
     #[serde(flatten)]
     pub artist: Artist,
     pub stats: TrackStats,
+}
+
+#[derive(FromRow)]
+pub struct ArtistForJob {
+    pub id: i64,
+    pub lidarr_id: Option<i64>,
+    pub metadata_updated_at: Option<OffsetDateTime>,
 }

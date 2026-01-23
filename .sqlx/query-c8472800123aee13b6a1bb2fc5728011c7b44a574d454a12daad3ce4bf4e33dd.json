@@ -1,0 +1,32 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT \"id\", \"lidarr_id\", \"metadata_updated_at\"\n            FROM \"artist\"\n            WHERE \"id\" = $1",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "lidarr_id",
+        "ordinal": 1,
+        "type_info": "Integer"
+      },
+      {
+        "name": "metadata_updated_at",
+        "ordinal": 2,
+        "type_info": "Datetime"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "c8472800123aee13b6a1bb2fc5728011c7b44a574d454a12daad3ce4bf4e33dd"
+}

@@ -1,1 +1,2 @@
 cargo sqlx prepare --workspace
+git add .sqlx

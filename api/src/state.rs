@@ -61,7 +61,7 @@ impl AppState {
         let search_service = Arc::new(SearchService::new(pool.clone()));
         let jwt_service = Arc::new(JwtService::new(&args)?);
         let lidarr_service = Arc::new(LidarrService::new(settings_service.clone()));
-        let image_service = Arc::new(ImageService::new(settings_service.clone()));
+        let image_service = Arc::new(ImageService::from_path(&args.settings_path));
         let notifier_service = Arc::new(NotifierService::new(pool.clone()));
         let stats_service = Arc::new(StatsService::new(pool.clone()));
 

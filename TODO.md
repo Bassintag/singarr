@@ -6,8 +6,9 @@
 [x] settings menu on navbar
 [x] wanted page
 [x] notifications on form submit
-[ ] monitored on artist / album
 [x] don't import missing tracks
 [x] cleanup tasks
-[ ] don't refresh metadata on sync if not created
+[x] don't refresh metadata on sync if not created
+[x] move images out of root folder and into config like radarr / lidarr
+[ ] monitored on artist / album
 [ ] logo

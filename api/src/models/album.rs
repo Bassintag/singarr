@@ -1,5 +1,6 @@
 use crate::utils::de::de_opt_i64;
 use serde::{Deserialize, Serialize};
+use sqlx::{prelude::FromRow, types::time::OffsetDateTime};
 
 use crate::models::{
     artist::Artist,
@@ -32,6 +33,13 @@ pub struct AlbumWithStats {
     pub album: Album,
     pub artist: Artist,
     pub stats: TrackStats,
+}
+
+#[derive(FromRow)]
+pub struct AlbumForJob {
+    pub id: i64,
+    pub lidarr_id: Option<i64>,
+    pub metadata_updated_at: Option<OffsetDateTime>,
 }
 
 #[derive(Debug, Clone, Deserialize)]

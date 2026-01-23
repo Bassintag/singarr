@@ -6,7 +6,7 @@ pub struct AppArgs {
     #[arg(long, env = "DATABASE_URL", default_value = "sqlite::memory:")]
     pub database_url: String,
 
-    #[arg(long, env = "SETTINGS_PATH", default_value = "./data/settings.json")]
+    #[arg(long, env = "SETTINGS_PATH", default_value = "./data")]
     pub settings_path: String,
 
     #[arg(long, env = "JWT_SECRET")]

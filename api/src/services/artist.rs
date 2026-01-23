@@ -2,7 +2,7 @@ use anyhow::Result;
 use sqlx::{prelude::FromRow, Pool, QueryBuilder, Sqlite};
 
 use crate::models::{
-    artist::{Artist, ArtistWithStats},
+    artist::{Artist, ArtistForJob, ArtistWithStats},
     generic::{IdRow, Page, Pageable, TotalRow, TrackStats},
     lidarr::LidarrArtist,
 };
@@ -101,6 +101,19 @@ impl ArtistSerivce {
         Ok(row.into())
     }
 
+    pub async fn find_for_job(&self, id: i64) -> Result<ArtistForJob> {
+        let row = sqlx::query_as!(
+            ArtistForJob,
+            r#"SELECT "id", "lidarr_id", "metadata_updated_at"
+            FROM "artist"
+            WHERE "id" = $1"#,
+            id
+        )
+        .fetch_one(&self.pool)
+        .await?;
+        Ok(row)
+    }
+
     pub async fn find_excluding(&self, exclude_ids: &Vec<i64>) -> Result<Vec<IdRow>> {
         let mut qb = sqlx::QueryBuilder::new(
             r#"SELECT "id"
@@ -122,7 +135,7 @@ impl ArtistSerivce {
         sqlx::query_as!(
             IdRow,
             r#"UPDATE artist 
-            SET "image_path" = $1, "description" = $2
+            SET "image_path" = $1, "description" = $2, "metadata_updated_at" = CURRENT_TIMESTAMP
             WHERE id = $3"#,
             image_path,
             description,

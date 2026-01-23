@@ -2,7 +2,7 @@ use anyhow::Result;
 use sqlx::{FromRow, Pool, QueryBuilder, Sqlite};
 
 use crate::models::{
-    album::{Album, AlbumWithStats, AlbumsFilters, AlbumsQuery},
+    album::{Album, AlbumForJob, AlbumWithStats, AlbumsFilters, AlbumsQuery},
     artist::Artist,
     generic::{IdRow, Page, Pageable, TotalRow, TrackStats},
     lidarr::LidarrAlbum,
@@ -144,6 +144,19 @@ impl AlbumSerivce {
         Ok(row.into())
     }
 
+    pub async fn find_for_job(&self, id: i64) -> Result<AlbumForJob> {
+        let row = sqlx::query_as!(
+            AlbumForJob,
+            r#"SELECT "id", "lidarr_id", "metadata_updated_at"
+            FROM "album"
+            WHERE "id" = $1"#,
+            id
+        )
+        .fetch_one(&self.pool)
+        .await?;
+        Ok(row)
+    }
+
     pub async fn find_excluding(
         &self,
         artist_id: i64,
@@ -193,7 +206,7 @@ impl AlbumSerivce {
         sqlx::query_as!(
             IdRow,
             r#"UPDATE album 
-            SET "cover_path" = $1, "description" = $2
+            SET "cover_path" = $1, "description" = $2, "metadata_updated_at" = CURRENT_TIMESTAMP
             WHERE id = $3"#,
             cover_path,
             description,

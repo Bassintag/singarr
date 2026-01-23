@@ -22,20 +22,20 @@ pub async fn sync_album(context: JobContext<SyncAlbumParams>) -> Result<()> {
     let album = context
         .state
         .album_service
-        .find(context.params.album_id)
+        .find_for_job(context.params.album_id)
         .await?;
 
-    if album.album.lidarr_id.is_none() {
+    if album.lidarr_id.is_none() {
         return Ok(());
     }
 
     let track_query = LidarrTrackQuery {
-        album_id: album.album.lidarr_id,
+        album_id: album.lidarr_id,
         ..Default::default()
     };
 
     let track_file_query = LidarrTrackFileQuery {
-        album_id: album.album.lidarr_id,
+        album_id: album.lidarr_id,
         ..Default::default()
     };
 
@@ -81,11 +81,13 @@ pub async fn sync_album(context: JobContext<SyncAlbumParams>) -> Result<()> {
         }
     }
 
-    sync_album_metadata(context.clone_with_params(SyncAlbumMetadataParams {
-        album_id: context.params.album_id,
-        force: false,
-    }))
-    .await?;
+    if album.metadata_updated_at.is_none() {
+        sync_album_metadata(context.clone_with_params(SyncAlbumMetadataParams {
+            album_id: context.params.album_id,
+            force: false,
+        }))
+        .await?;
+    }
 
     Ok(())
 }

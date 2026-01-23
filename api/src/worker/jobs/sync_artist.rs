@@ -23,15 +23,15 @@ pub async fn sync_artist(context: JobContext<SyncArtistParams>) -> Result<()> {
     let artist = context
         .state
         .artist_service
-        .find(context.params.artist_id)
+        .find_for_job(context.params.artist_id)
         .await?;
 
-    if artist.artist.lidarr_id.is_none() {
+    if artist.lidarr_id.is_none() {
         return Ok(());
     }
 
     let album_query = LidarrAlbumQuery {
-        artist_id: artist.artist.lidarr_id,
+        artist_id: artist.lidarr_id,
         ..Default::default()
     };
 
@@ -84,11 +84,13 @@ pub async fn sync_artist(context: JobContext<SyncArtistParams>) -> Result<()> {
         }
     }
 
-    sync_artist_metadata(context.clone_with_params(SyncArtistMetadataParams {
-        artist_id: context.params.artist_id,
-        force: false,
-    }))
-    .await?;
+    if artist.metadata_updated_at.is_none() {
+        sync_artist_metadata(context.clone_with_params(SyncArtistMetadataParams {
+            artist_id: context.params.artist_id,
+            force: false,
+        }))
+        .await?;
+    }
 
     Ok(())
 }

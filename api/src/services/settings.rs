@@ -13,7 +13,7 @@ pub struct SettingsService {
 
 impl SettingsService {
     pub async fn from_path(path: impl Into<PathBuf>) -> Result<Self> {
-        let path_buf: PathBuf = path.into();
+        let path_buf: PathBuf = path.into().join("settings.json");
         let settings = if path_buf.exists() {
             let data = tokio::fs::read_to_string(&path_buf).await?;
             serde_json::from_str::<Settings>(&data)?

@@ -1,17 +1,15 @@
-use std::{path::PathBuf, sync::Arc};
+use std::path::PathBuf;
 
 use anyhow::Result;
 
-use crate::services::settings::SettingsService;
-
 #[derive(Clone)]
 pub struct ImageService {
-    settings_service: Arc<SettingsService>,
+    path: PathBuf,
 }
 
 impl ImageService {
-    pub fn new(settings_service: Arc<SettingsService>) -> Self {
-        Self { settings_service }
+    pub fn from_path(path: impl Into<PathBuf>) -> Self {
+        Self { path: path.into() }
     }
 
     fn convert(bytes: &Vec<u8>) -> Result<Vec<u8>> {
@@ -23,10 +21,7 @@ impl ImageService {
     }
 
     pub async fn resolve_path(&self, relative_path: &PathBuf) -> PathBuf {
-        let settings = self.settings_service.get().await;
-        PathBuf::from(settings.root_folder)
-            .join("images")
-            .join(relative_path)
+        self.path.join("images").join(relative_path)
     }
 
     pub async fn download(&self, url: &String, relative_path: &PathBuf) -> Result<PathBuf> {
