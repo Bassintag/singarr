@@ -24,12 +24,15 @@ pub async fn search_artist(context: JobContext<SearchArtistParams>) -> Result<()
         )
         .await?;
 
-    for album in albums.iter() {
-        if album.stats.with_lyrics_count < album.stats.tracks_count {
-            search_album(context.clone_with_params(SearchAlbumParams {
-                album_id: album.album.id,
+    for item in albums.iter() {
+        if item.stats.with_lyrics_count < item.stats.tracks_count {
+            if let Err(e) = search_album(context.clone_with_params(SearchAlbumParams {
+                album_id: item.album.id,
             }))
-            .await?;
+            .await
+            {
+                eprintln!("Error while searching album {}: {}", item.album.title, e);
+            }
         }
     }
 

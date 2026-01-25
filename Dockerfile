@@ -40,14 +40,17 @@ ENV PATH="$PNPM_HOME:$PATH"
 
 RUN corepack enable
 
-COPY ./web ./web
+COPY ./web/package.json ./web/package.json
 COPY ./package.json ./pnpm-lock.yaml ./pnpm-workspace.yaml ./
+
+RUN pnpm i --frozen-lockfile
+
+COPY ./web ./web
 
 ENV PUBLIC_API_PATH=/api/
 ENV PUBLIC_IMAGES_PATH=/images/
 
-RUN pnpm i --frozen-lockfile && \
-    pnpm run --filter=web build
+RUN pnpm run --filter=web build
 
 
 FROM nginx:alpine AS release

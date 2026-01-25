@@ -84,16 +84,16 @@ const appArtistsIdRoute = appArtistsIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof appIndexRoute
-  '/login': typeof LoginIndexRoute
+  '/login/': typeof LoginIndexRoute
   '/artists/$id': typeof appArtistsIdRoute
-  '/albums': typeof appAlbumsIndexRoute
-  '/artists': typeof appArtistsIndexRoute
-  '/jobs': typeof appJobsIndexRoute
-  '/notifiers': typeof appNotifiersIndexRoute
-  '/settings': typeof appSettingsIndexRoute
-  '/tasks': typeof appTasksIndexRoute
-  '/tracks': typeof appTracksIndexRoute
-  '/wanted': typeof appWantedIndexRoute
+  '/albums/': typeof appAlbumsIndexRoute
+  '/artists/': typeof appArtistsIndexRoute
+  '/jobs/': typeof appJobsIndexRoute
+  '/notifiers/': typeof appNotifiersIndexRoute
+  '/settings/': typeof appSettingsIndexRoute
+  '/tasks/': typeof appTasksIndexRoute
+  '/tracks/': typeof appTracksIndexRoute
+  '/wanted/': typeof appWantedIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof appIndexRoute
@@ -127,16 +127,16 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/login'
+    | '/login/'
     | '/artists/$id'
-    | '/albums'
-    | '/artists'
-    | '/jobs'
-    | '/notifiers'
-    | '/settings'
-    | '/tasks'
-    | '/tracks'
-    | '/wanted'
+    | '/albums/'
+    | '/artists/'
+    | '/jobs/'
+    | '/notifiers/'
+    | '/settings/'
+    | '/tasks/'
+    | '/tracks/'
+    | '/wanted/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -183,7 +183,7 @@ declare module '@tanstack/react-router' {
     '/login/': {
       id: '/login/'
       path: '/login'
-      fullPath: '/login'
+      fullPath: '/login/'
       preLoaderRoute: typeof LoginIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -197,56 +197,56 @@ declare module '@tanstack/react-router' {
     '/(app)/wanted/': {
       id: '/(app)/wanted/'
       path: '/wanted'
-      fullPath: '/wanted'
+      fullPath: '/wanted/'
       preLoaderRoute: typeof appWantedIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/tracks/': {
       id: '/(app)/tracks/'
       path: '/tracks'
-      fullPath: '/tracks'
+      fullPath: '/tracks/'
       preLoaderRoute: typeof appTracksIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/tasks/': {
       id: '/(app)/tasks/'
       path: '/tasks'
-      fullPath: '/tasks'
+      fullPath: '/tasks/'
       preLoaderRoute: typeof appTasksIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/settings/': {
       id: '/(app)/settings/'
       path: '/settings'
-      fullPath: '/settings'
+      fullPath: '/settings/'
       preLoaderRoute: typeof appSettingsIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/notifiers/': {
       id: '/(app)/notifiers/'
       path: '/notifiers'
-      fullPath: '/notifiers'
+      fullPath: '/notifiers/'
       preLoaderRoute: typeof appNotifiersIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/jobs/': {
       id: '/(app)/jobs/'
       path: '/jobs'
-      fullPath: '/jobs'
+      fullPath: '/jobs/'
       preLoaderRoute: typeof appJobsIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/artists/': {
       id: '/(app)/artists/'
       path: '/artists'
-      fullPath: '/artists'
+      fullPath: '/artists/'
       preLoaderRoute: typeof appArtistsIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/albums/': {
       id: '/(app)/albums/'
       path: '/albums'
-      fullPath: '/albums'
+      fullPath: '/albums/'
       preLoaderRoute: typeof appAlbumsIndexRouteImport
       parentRoute: typeof appRouteRoute
     }

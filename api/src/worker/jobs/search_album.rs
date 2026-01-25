@@ -43,8 +43,16 @@ pub async fn search_album(context: JobContext<SearchAlbumParams>) -> Result<()> 
     let mut i: usize = 0;
     loop {
         context.log(format!("[{}/{}] Searching tracks", i, filtered.len()));
-        if futures.try_next().await?.is_none() {
-            break;
+        let result = futures.try_next().await;
+        match result {
+            Err(e) => {
+                eprintln!("Error while searching track {}: {}", filtered[i].title, e);
+            }
+            Ok(o) => {
+                if o.is_none() {
+                    break;
+                }
+            }
         }
         i += 1;
     }

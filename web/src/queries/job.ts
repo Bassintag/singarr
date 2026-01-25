@@ -32,6 +32,7 @@ export function createJobMutationOptions() {
 
       return new Promise<void>((resolve, reject) => {
         const handleEvent = (e: AppEvent) => {
+          console.log("handleEvent", e, jobId)
           if (e.type === "jobEnd" && e.job.id === jobId) {
             unsubscribe();
             resolve();

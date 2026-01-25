@@ -10,5 +10,7 @@
 [x] cleanup tasks
 [x] don't refresh metadata on sync if not created
 [x] move images out of root folder and into config like radarr / lidarr
+[x] Infinite loop in production on job webhook
+[x] Don't stop searching when error in child task
 [ ] monitored on artist / album
 [ ] logo

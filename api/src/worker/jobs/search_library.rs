@@ -15,10 +15,13 @@ pub async fn search_library(context: JobContext<()>) -> Result<()> {
             albums.len(),
             item.artist.name
         ));
-        search_artist(context.clone_with_params(SearchArtistParams {
+        if let Err(e) = search_artist(context.clone_with_params(SearchArtistParams {
             artist_id: item.artist.id,
         }))
-        .await?;
+        .await
+        {
+            eprintln!("Error while searching album {}: {}", item.artist.name, e);
+        }
     }
 
     Ok(())

@@ -26,4 +26,8 @@ export default defineConfig({
   },
   envDir: "..",
   envPrefix: "PUBLIC_",
+  build: {
+    minify: false,
+    sourcemap: true
+  }
 });
