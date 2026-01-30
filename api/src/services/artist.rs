@@ -1,10 +1,16 @@
+use std::sync::Arc;
+
 use anyhow::Result;
 use sqlx::{prelude::FromRow, Pool, QueryBuilder, Sqlite};
 
-use crate::models::{
-    artist::{Artist, ArtistForJob, ArtistWithStats},
-    generic::{IdRow, Page, Pageable, TotalRow, TrackStats},
-    lidarr::LidarrArtist,
+use crate::{
+    models::{
+        artist::{Artist, ArtistForJob, ArtistWithStats},
+        event::Event,
+        generic::{IdRow, Page, Pageable, TotalRow, TrackStats},
+        lidarr::LidarrArtist,
+    },
+    services::event::EventService,
 };
 
 #[derive(FromRow)]
@@ -56,11 +62,15 @@ LEFT JOIN lyrics l ON l."track_id" = t."id""#;
 #[derive(Clone)]
 pub struct ArtistSerivce {
     pool: Pool<Sqlite>,
+    event_service: Arc<EventService>,
 }
 
 impl ArtistSerivce {
-    pub fn new(pool: Pool<Sqlite>) -> Self {
-        Self { pool }
+    pub fn new(pool: Pool<Sqlite>, event_service: Arc<EventService>) -> Self {
+        Self {
+            pool,
+            event_service,
+        }
     }
 
     pub async fn count(&self) -> Result<i64> {
@@ -165,6 +175,8 @@ impl ArtistSerivce {
         )
         .fetch_one(&self.pool)
         .await?;
+        let artist = self.find(row.id).await?;
+        self.event_service.send(Event::ArtistCreated { artist });
         Ok(row.id)
     }
 
@@ -176,6 +188,7 @@ impl ArtistSerivce {
         )
         .execute(&self.pool)
         .await?;
+        self.event_service.send(Event::ArtistDeleted { id });
         Ok(())
     }
 }

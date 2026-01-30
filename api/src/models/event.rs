@@ -1,4 +1,6 @@
-use crate::models::{job::Job, lyrics::Lyrics};
+use crate::models::{
+    album::Album, artist::ArtistWithStats, job::Job, lyrics::Lyrics, track::Track,
+};
 use serde::Serialize;
 
 #[derive(Debug, Clone, Serialize)]
@@ -11,6 +13,30 @@ pub enum Event {
     JobLog { job_id: i64, log: String },
     #[serde(rename_all = "camelCase")]
     JobEnd { job: Job },
+
+    // Artist
+    #[serde(rename_all = "camelCase")]
+    ArtistCreated { artist: ArtistWithStats },
+    #[serde(rename_all = "camelCase")]
+    ArtistUpdated { artist: ArtistWithStats },
+    #[serde(rename_all = "camelCase")]
+    ArtistDeleted { id: i64 },
+
+    // Album
+    #[serde(rename_all = "camelCase")]
+    AlbumCreated { album: Album },
+    #[serde(rename_all = "camelCase")]
+    AlbumUpdated { album: Album },
+    #[serde(rename_all = "camelCase")]
+    AlbumDeleted { id: i64 },
+
+    // Track
+    #[serde(rename_all = "camelCase")]
+    TrackCreated { track: Track },
+    #[serde(rename_all = "camelCase")]
+    TrackUpdated { track: Track },
+    #[serde(rename_all = "camelCase")]
+    TrackDeleted { id: i64 },
 
     // Lyrics
     #[serde(rename_all = "camelCase")]
