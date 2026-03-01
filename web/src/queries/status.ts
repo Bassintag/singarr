@@ -5,6 +5,7 @@ import { queryOptions } from "@tanstack/react-query";
 export function statusQueryOptions() {
   return queryOptions({
     queryKey: ["status"],
-    queryFn: () => fetchApi<Status>("status"),
+    queryFn: () => fetchApi<Status>("status", { auth: false }),
+    staleTime: 600_000,
   });
 }

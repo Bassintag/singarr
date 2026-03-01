@@ -2,9 +2,13 @@
   "name": "singarr",
   "private": true,
   "scripts": {
-    "prepare": "husky"
+    "prepare": "husky",
+    "dev:api": "cargo run -p singarr-api",
+    "dev:web": "pnpm run --filter=web dev",
+    "dev": "concurrently -c=green,yellow --names=api,web \"yarn dev:api\" \"yarn dev:web\""
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "husky": "^9.1.7"
   }
 }

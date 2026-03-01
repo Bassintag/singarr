@@ -14,8 +14,11 @@ export function setSettingsMutationOptions() {
     mutationFn: (body: Settings) => {
       return fetchApi<Settings>("settings", { method: "PUT", json: body });
     },
-    onSuccess: (data, _variables, _onResult, { client }) => {
+    onSuccess: async (data, _variables, _onResult, { client }) => {
       client.setQueryData(["settings"], data);
+      client.invalidateQueries({
+        queryKey: ["status"],
+      });
     },
   });
 }

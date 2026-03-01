@@ -1,6 +1,10 @@
 import type { TokenPair, TokenPayload } from "@/domain/token";
 import { useTokenState } from "@/hooks/token/useTokenState";
-import * as qs from "qs";
+import { statusQueryOptions } from "@/queries/status";
+import { queryClient } from "@/queryClient";
+import qs from "qs";
+
+export class ApiAuthError extends Error {}
 
 export class ApiError extends Error {
   readonly response: ResponseInit;
@@ -8,7 +12,7 @@ export class ApiError extends Error {
   constructor(
     response: ResponseInit,
     message?: string,
-    options?: ErrorOptions
+    options?: ErrorOptions,
   ) {
     super(message, options);
     this.response = response;
@@ -27,17 +31,19 @@ function isExpired(payload: TokenPayload) {
   return (payload.exp - 5) * 1000 < Date.now();
 }
 
-async function getToken() {
+export async function getToken() {
+  const status = await queryClient.fetchQuery(statusQueryOptions());
+  if (!status.auth) return null;
   const tokens = useTokenState.getState().tokens;
   if (tokens == null) {
-    return null;
+    throw new ApiAuthError();
   }
   if (!isExpired(tokens.accessPayload)) {
     return tokens.access;
   }
   if (tokenPromise == null) {
     if (isExpired(tokens.refreshPayload)) {
-      return null;
+      throw new ApiAuthError();
     }
     tokenPromise = new Promise<string>((resolve, reject) => {
       fetchApi<TokenPair>("tokens", {
@@ -66,7 +72,7 @@ export function resolveApiUrl(path: string) {
 
 export async function fetchApi<T>(
   path: string,
-  { auth = true, json, query, ...init }: ApiRequestInit = {}
+  { auth = true, json, query, ...init }: ApiRequestInit = {},
 ) {
   const url = resolveApiUrl(path);
   url.search = qs.stringify(query);

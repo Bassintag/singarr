@@ -5,7 +5,11 @@ import { mutationOptions } from "@tanstack/react-query";
 export function createTokensMutationOptions() {
   return mutationOptions({
     mutationFn: (body: CreateTokens) => {
-      return fetchApi<TokenPair>("tokens", { method: "POST", json: body });
+      return fetchApi<TokenPair>("tokens", {
+        method: "POST",
+        json: body,
+        auth: false,
+      });
     },
   });
 }
